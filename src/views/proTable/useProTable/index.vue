@@ -112,10 +112,10 @@ const getTableList = async params => {
 // 页面按钮权限（按钮权限既可以使用 hooks，也可以直接使用 v-auth 指令，指令适合直接绑定在按钮上，hooks 适合根据按钮权限显示不同的内容）
 const { BUTTONS } = useAuthButtons();
 
-// 自定义渲染表头（使用tsx语法）
+// 自定义渲染表头（使用jsx语法）
 const headerRender = scope => {
   return (
-    <el-button type="primary" onClick={() => ElMessage.success("我是通过 tsx 语法渲染的表头")}>
+    <el-button type="primary" onClick={() => ElMessage.success("我是通过 jsx 语法渲染的表头")}>
       {scope.column.label}
     </el-button>
   );
@@ -132,7 +132,7 @@ const columns = reactive([
     search: { el: "input", tooltip: "我是搜索提示", key: "username" },
     render: scope => {
       return (
-        <el-button type="primary" link onClick={() => ElMessage.success("我是通过 tsx 语法渲染的内容")}>
+        <el-button type="primary" link onClick={() => ElMessage.success("我是通过 jsx 语法渲染的内容")}>
           {scope.row.username}
         </el-button>
       );

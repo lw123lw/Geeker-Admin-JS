@@ -162,10 +162,11 @@ const handleCheckChange = () => {
 
 onMounted(() => {
   setSelected();
-  if (props.data) {
+  if (props.data.length > 0) {
     treeData.value = props.data;
     treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
   } else {
+    console.log({ props });
     if (props.requestApi) {
       props.requestApi().then(res => {
         console.log({ res });

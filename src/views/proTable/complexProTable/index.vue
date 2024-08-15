@@ -47,10 +47,10 @@ import { getUserList, deleteUser, resetUserPassWord, getUserStatus, getUserGende
 // ProTable 实例
 const proTable = ref();
 
-// 自定义渲染表头（使用tsx语法）
+// 自定义渲染表头（使用jsx语法）
 const headerRender = scope => {
   return (
-    <el-button type="primary" onClick={() => ElMessage.success("我是通过 tsx 语法渲染的表头")}>
+    <el-button type="primary" onClick={() => ElMessage.success("我是通过 jsx 语法渲染的表头")}>
       {scope.column.label}
     </el-button>
   );

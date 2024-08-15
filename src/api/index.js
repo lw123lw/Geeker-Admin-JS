@@ -2,9 +2,8 @@ import axios from "axios";
 import { showFullScreenLoading, tryHideFullScreenLoading } from "@/components/Loading/fullScreen";
 import { LOGIN_URL } from "@/config";
 import { ElMessage } from "element-plus";
-import { ResultEnum } from "@/enums/httpEnum";
-import { checkStatus } from "./helper/checkStatus.js";
-import { AxiosCanceler } from "./helper/axiosCancel.js";
+import { checkStatus } from "./helper/checkStatus";
+import { AxiosCanceler } from "./helper/axiosCancel";
 import { useUserStore } from "@/stores/modules/user";
 import router from "@/routers";
 
@@ -12,7 +11,7 @@ const config = {
   // 默认地址请求地址，可在 .env.** 文件中修改
   baseURL: import.meta.env.VITE_API_URL,
   // 设置超时时间
-  timeout: ResultEnum.TIMEOUT,
+  timeout: 30000,
   // 跨域时候允许携带凭证
   withCredentials: true
 };
@@ -20,7 +19,6 @@ const config = {
 const axiosCanceler = new AxiosCanceler();
 
 class RequestHttp {
-  service;
   constructor(config) {
     // instantiation
     this.service = axios.create(config);
@@ -34,11 +32,11 @@ class RequestHttp {
       config => {
         const userStore = useUserStore();
         // 重复请求不需要取消，在 api 服务中通过指定的第三个参数: { cancel: false } 来控制
-        config.cancel ??= true;
-        config?.cancel && axiosCanceler.addPending(config);
+        config.cancel = config.cancel ? config.cancel : true;
+        config.cancel && axiosCanceler.addPending(config);
         // 当前请求不需要显示 loading，在 api 服务中通过指定的第三个参数: { loading: false } 来控制
-        config.loading ??= true;
-        config?.loading && showFullScreenLoading();
+        config.loading = config.loading ? config.loading : true;
+        config.loading && showFullScreenLoading();
         if (config.headers && typeof config.headers.set === "function") {
           config.headers.set("x-access-token", userStore.token);
         }
@@ -61,14 +59,14 @@ class RequestHttp {
         axiosCanceler.removePending(config);
         config.loading && tryHideFullScreenLoading();
         // 登录失效
-        if (data.code === ResultEnum.OVERDUE) {
+        if (data.code == "401") {
           userStore.setToken("");
           router.replace(LOGIN_URL);
           ElMessage.error(data.msg);
           return Promise.reject(data);
         }
         // 全局错误信息拦截（防止下载文件的时候返回数据流，没有 code 直接报错）
-        if (data.code && data.code !== ResultEnum.SUCCESS) {
+        if (data.code && data.code != 200) {
           ElMessage.error(data.msg);
           return Promise.reject(data);
         }

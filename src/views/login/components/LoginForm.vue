@@ -38,7 +38,6 @@ import { useTabsStore } from "@/stores/modules/tabs";
 import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
-import type { ElForm } from "element-plus";
 import md5 from "md5";
 
 const router = useRouter();
@@ -59,7 +58,7 @@ const loginForm = reactive({
 });
 
 // login
-const login = (formEl) => {
+const login = formEl => {
   if (!formEl) return;
   formEl.validate(async valid => {
     if (!valid) return;
@@ -75,9 +74,11 @@ const login = (formEl) => {
       // 3.清空 tabs、keepAlive 数据
       await tabsStore.setTabs([]);
       await keepAliveStore.setKeepAliveName([]);
-
+      // debugger;
       // 4.跳转到首页
-      await router.push(HOME_URL);
+      setTimeout(() => {
+        router.push(HOME_URL);
+      }, 1000);
       // ElNotification({
       //   title: getTimeState(),
       //   message: "欢迎登录 Geeker-Admin",
@@ -98,14 +99,14 @@ const login = (formEl) => {
 };
 
 // resetForm
-const resetForm = (formEl) => {
+const resetForm = formEl => {
   if (!formEl) return;
   formEl.resetFields();
 };
 
 onMounted(() => {
   // 监听 enter 事件（调用登录）
-  document.onkeydown = (e) => {
+  document.onkeydown = e => {
     if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
       if (loading.value) return;
       login(loginFormRef.value);
@@ -119,5 +120,5 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-@import "../index.scss";
+@import "../index";
 </style>

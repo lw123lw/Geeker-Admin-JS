@@ -5,7 +5,6 @@
 </template>
 
 <script setup name="pie">
-import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
 
 const pieData = [
@@ -44,7 +43,7 @@ const option = {
       color: "#a1a1a1",
       fontWeight: 500
     },
-    formatter: function (name) {
+    formatter(name) {
       let dataCopy = "";
       for (let i = 0; i < pieData.length; i++) {
         if (pieData[i].name === name && pieData[i].value >= 10000) {

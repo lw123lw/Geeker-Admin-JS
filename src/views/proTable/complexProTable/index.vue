@@ -36,13 +36,12 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="complexProTable">
+<script setup lang="jsx" name="complexProTable">
 import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import ProTable from "@/components/ProTable/index.vue";
 import { CirclePlus, Pointer, Delete, Refresh } from "@element-plus/icons-vue";
-import type { TableColumnCtx } from "element-plus/es/components/table/src/table-column/defaults";
 import { getUserList, deleteUser, resetUserPassWord, getUserStatus, getUserGender } from "@/api/modules/user";
 
 // ProTable 实例
@@ -116,7 +115,7 @@ const getSummaries = param => {
 };
 
 // 列合并
-const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
+const objectSpanMethod = ({ rowIndex, columnIndex }) => {
   if (columnIndex === 3) {
     if (rowIndex % 2 === 0) return { rowspan: 2, colspan: 1 };
     else return { rowspan: 0, colspan: 0 };
@@ -124,14 +123,14 @@ const objectSpanMethod = ({ rowIndex, columnIndex }: SpanMethodProps) => {
 };
 
 // 设置列样式
-const tableRowClassName = ({ rowIndex }: { row; rowIndex }) => {
+const tableRowClassName = ({ rowIndex }) => {
   if (rowIndex === 2) return "warning-row";
   if (rowIndex === 6) return "success-row";
   return "";
 };
 
 // 单击行
-const rowClick = (row, column: TableColumnCtx) => {
+const rowClick = (row, column) => {
   if (column.property == "radio" || column.property == "operation") return;
   console.log(row);
   ElMessage.success("当前行被点击了！");

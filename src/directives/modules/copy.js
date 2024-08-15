@@ -18,7 +18,7 @@ const copy = {
   }
 };
 
-async function handleClick(this) {
+async function handleClick() {
   try {
     await navigator.clipboard.writeText(this.copyData);
     ElMessage({

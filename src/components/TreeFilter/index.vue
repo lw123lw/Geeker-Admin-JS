@@ -6,7 +6,9 @@
     <div class="search">
       <el-input v-model="filterText" placeholder="输入关键字进行过滤" clearable />
       <el-dropdown trigger="click">
-        <el-icon size="20"><More /></el-icon>
+        <el-icon size="20">
+          <More />
+        </el-icon>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toggleTreeNodes(true)">展开全部</el-dropdown-item>
@@ -49,10 +51,38 @@
 import { ref, watch, onBeforeMount, nextTick } from "vue";
 import { ElTree } from "element-plus";
 
-const props = withDefaults(defineProps(["id", "label", "multiple", "title"]), {
-  id: "id",
-  label: "label",
-  multiple: false
+const props = defineProps({
+  id: {
+    type: String,
+    default: "id",
+    required: false
+  },
+  title: {
+    type: String,
+    default: () => ""
+  },
+  label: {
+    type: String,
+    default: "label"
+  },
+  multiple: {
+    type: Boolean,
+    default: false,
+    required: false
+  },
+  defaultValue: {
+    type: [String, Array],
+    default: () => ""
+  },
+  data: {
+    type: Array,
+    default: () => [],
+    required: false
+  },
+  requestApi: {
+    type: Function,
+    default: () => {}
+  }
 });
 
 const defaultProps = {
@@ -71,6 +101,11 @@ const setSelected = () => {
 };
 
 onBeforeMount(async () => {
+  if (props.data?.length) {
+    treeData.value = props.data;
+    treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
+    return;
+  }
   setSelected();
   if (props.requestApi) {
     const { data } = await props.requestApi();
@@ -105,12 +140,12 @@ watch(filterText, val => {
 // 过滤
 const filterNode = (value, data, node) => {
   if (!value) return true;
-  let parentNode = node.parent,
+  let parentNode = node?.parent,
     labels = [node.label],
     level = 1;
   while (level < node.level) {
-    labels = [...labels, parentNode.label];
-    parentNode = parentNode.parent;
+    labels = [...labels, parentNode?.label];
+    parentNode = parentNode?.parent;
     level++;
   }
   return labels.some(label => label.indexOf(value) !== -1);
@@ -146,5 +181,5 @@ defineExpose({ treeData, treeAllData, treeRef });
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

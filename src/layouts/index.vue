@@ -7,12 +7,13 @@
 </template>
 
 <script setup name="layout">
-import { computed, reactive, watch, type Component } from "vue";
+import { computed, reactive, watch } from "vue";
 import ThemeDrawer from "./components/ThemeDrawer/index.vue";
 import LayoutVertical from "./LayoutVertical/index.vue";
 import LayoutClassic from "./LayoutClassic/index.vue";
 import LayoutTransverse from "./LayoutTransverse/index.vue";
 import LayoutColumns from "./LayoutColumns/index.vue";
+import { useGlobalStore } from "@/stores/modules/global.js";
 
 const LayoutComponents = {
   vertical: LayoutVertical,

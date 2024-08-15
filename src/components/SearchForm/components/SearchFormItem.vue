@@ -26,7 +26,16 @@
 import { computed, inject, ref } from "vue";
 import { handleProp } from "@/utils";
 
-const props = defineProps(["column"]);
+const props = defineProps({
+  searchParam: {
+    type: Object,
+    default: () => ({})
+  },
+  column: {
+    type: Object,
+    default: () => ({})
+  }
+});
 
 // Re receive SearchParam
 const _searchParam = computed(() => props.searchParam);

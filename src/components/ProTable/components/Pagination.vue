@@ -13,5 +13,18 @@
 </template>
 
 <script setup name="Pagination">
-defineProps(["pageable", "handleSizeChange", "handleCurrentChange"]);
+const props = defineProps({
+  pageable: {
+    type: Object,
+    default: () => {}
+  },
+  handleSizeChange: {
+    type: Function,
+    default: () => {}
+  },
+  handleCurrentChange: {
+    type: Function,
+    default: () => {}
+  }
+});
 </script>

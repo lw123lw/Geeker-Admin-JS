@@ -9,9 +9,23 @@ import { useDebounceFn } from "@vueuse/core";
 import { useGlobalStore } from "@/stores/modules/global";
 import { storeToRefs } from "pinia";
 
-const props = withDefaults(defineProps(), {
-  renderer: "canvas",
-  resize: true
+const props = defineProps({
+  option: {
+    type: Object,
+    default: () => ({})
+  },
+  echartsStyle: {
+    type: Object,
+    default: () => ({})
+  },
+  renderer: {
+    type: String,
+    default: "canvas"
+  },
+  resize: {
+    type: Boolean,
+    default: true
+  }
 });
 
 const echartsStyle = computed(() => {

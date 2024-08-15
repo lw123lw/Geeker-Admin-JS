@@ -1,5 +1,4 @@
 import { resolve } from "path";
-import { PluginOption } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { createHtmlPlugin } from "vite-plugin-html";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -27,11 +26,8 @@ export const createVitePlugins = viteEnv => {
     eslintPlugin(),
     // name 可以写在 script 标签上
     vueSetupExtend({}),
-    // 创建打包压缩配置
-    createCompressionviteEnv,
     // 注入变量到 html 文件
     createHtmlPlugin({
-      minify,
       inject: {
         data: { title: VITE_GLOB_APP_TITLE }
       }

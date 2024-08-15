@@ -16,7 +16,7 @@ import SelectFilter from "@/components/SelectFilter/index.vue";
 
 const filterResult = ref({ state: "1", type: ["1", "3"] });
 
-const changeFilter = (val: typeof filterResult.value) => {
+const changeFilter = val => {
   filterResult.value = val;
 };
 
@@ -87,5 +87,5 @@ const filterData = [
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

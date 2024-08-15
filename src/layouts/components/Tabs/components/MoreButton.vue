@@ -46,7 +46,7 @@ const globalStore = useGlobalStore();
 const keepAliveStore = useKeepAliveStore();
 
 // refresh current page
-const refreshCurrentPage: Function = inject("refresh");
+const refreshCurrentPage = inject("refresh");
 const refresh = () => {
   setTimeout(() => {
     route.meta.isKeepAlive && keepAliveStore.removeKeepAliveName(route.fullPath);
@@ -77,5 +77,5 @@ const closeAllTab = () => {
 </script>
 
 <style scoped lang="scss">
-@import "../index.scss";
+@import "../index";
 </style>

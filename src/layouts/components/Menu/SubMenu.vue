@@ -23,7 +23,13 @@
 <script setup>
 import { useRouter } from "vue-router";
 
-defineProps(["menuList"]);
+const props = defineProps({
+  menuList: {
+    type: Array,
+    required: true,
+    default: () => []
+  }
+});
 
 const router = useRouter();
 const handleClickMenu = subItem => {

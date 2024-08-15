@@ -1,15 +1,24 @@
 <template>
-  <svg :style="iconStyle" aria-hidden="true">
+  <svg :style="iconStyle" aria-hidden="true" :title="name">
     <use :xlink:href="symbolId" />
   </svg>
 </template>
 
 <script setup name="SvgIcon">
-import { computed, CSSProperties } from "vue";
+import { computed } from "vue";
 
-const props = withDefaults(defineProps(["iconStyle", "prefix"]), {
-  prefix: "icon",
-  iconStyle: () => ({ width: "100px", height: "100px" })
+const props = defineProps({
+  iconStyle: {
+    type: Object,
+    default: () => ({ width: "100px", height: "100px" })
+  },
+  prefix: {
+    type: String,
+    default: "icon"
+  },
+  name: {
+    type: String
+  }
 });
 
 const symbolId = computed(() => `#${props.prefix}-${props.name}`);

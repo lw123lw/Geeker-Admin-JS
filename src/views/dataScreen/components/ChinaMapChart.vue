@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import echarts, { ECOption } from "@/components/ECharts/config";
+import echarts from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
 import mapJson from "../assets/china.json";
 

@@ -2,14 +2,13 @@ import router from "@/routers";
 import { defineStore } from "pinia";
 import { getUrlWithParams } from "@/utils";
 import { useKeepAliveStore } from "./keepAlive";
-import { TabsState, TabsMenuProps } from "@/stores/interface";
 import piniaPersistConfig from "@/stores/helper/persist";
 
 const keepAliveStore = useKeepAliveStore();
 
 export const useTabsStore = defineStore({
   id: "geeker-tabs",
-  state: (): TabsState => ({
+  state: () => ({
     tabsMenuList: []
   }),
   actions: {
@@ -40,7 +39,7 @@ export const useTabsStore = defineStore({
       this.tabsMenuList = this.tabsMenuList.filter(item => item.path !== tabPath);
     },
     // Close Tabs On Side
-    async closeTabsOnSide(path, type: "left" | "right") {
+    async closeTabsOnSide(path, type) {
       const currentIndex = this.tabsMenuList.findIndex(item => item.path === path);
       if (currentIndex !== -1) {
         const range = type === "left" ? [0, currentIndex] : [currentIndex + 1, this.tabsMenuList.length];
@@ -53,7 +52,7 @@ export const useTabsStore = defineStore({
       keepAliveStore.setKeepAliveName(KeepAliveList.map(item => item.path));
     },
     // Close MultipleTab
-    async closeMultipleTab(tabsMenuValue?) {
+    async closeMultipleTab(tabsMenuValue) {
       this.tabsMenuList = this.tabsMenuList.filter(item => {
         return item.path === tabsMenuValue || !item.close;
       });

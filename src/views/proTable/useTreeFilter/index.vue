@@ -37,7 +37,6 @@
 </template>
 <script setup name="useTreeFilter">
 import { ref, reactive } from "vue";
-import { User } from "@/api/interface";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
@@ -46,7 +45,6 @@ import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
-import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import {
   getUserList,
@@ -114,7 +112,7 @@ const columns = reactive([
 // 删除用户信息
 const deleteAccount = async params => {
   await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
-  proTable.value?.getTableList();
+  proTable.value.getTableList();
 };
 
 // 重置用户密码

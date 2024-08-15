@@ -1,6 +1,4 @@
-import { Theme } from "@/hooks/interface";
-
-export const menuTheme: Record<Theme.ThemeType, { [key] }> = {
+export const menuTheme = {
   light: {
     "--el-menu-bg-color": "#ffffff",
     "--el-menu-hover-bg-color": "#cccccc",

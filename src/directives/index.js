@@ -1,4 +1,3 @@
-import { App } from "vue";
 import auth from "./modules/auth.js";
 import copy from "./modules/copy.js";
 import waterMarker from "./modules/waterMarker.js";
@@ -18,7 +17,7 @@ const directivesList = {
 };
 
 const directives = {
-  install: function (app) {
+  install(app) {
     Object.keys(directivesList).forEach(key => {
       app.directive(key, directivesList[key]);
     });

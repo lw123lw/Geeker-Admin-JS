@@ -1,5 +1,4 @@
 <!-- 📚📚📚 Pro-Table 文档: https://juejin.cn/post/7166068828202336263 -->
-
 <template>
   <!-- 查询表单 -->
   <SearchForm
@@ -20,23 +19,20 @@
       </div>
       <div v-if="toolButton" class="header-button-ri">
         <slot name="toolButton">
-          <el-tooltip content="刷新" placement="top">
-            <el-button v-if="showToolButton('refresh')" :icon="Refresh" circle @click="getTableList" />
-          </el-tooltip>
-          <el-tooltip content="列设置" placement="top">
-            <el-button v-if="showToolButton('setting') && columns.length" :icon="Operation" circle @click="openColSetting" />
-          </el-tooltip>
-          <el-tooltip content="开/关搜索" placement="top">
-            <el-button
-              v-if="showToolButton('search') && searchColumns?.length"
-              :icon="Search"
-              circle
-              @click="isShowSearch = !isShowSearch"
-            />
-          </el-tooltip>
-          <el-tooltip content="开/关图谱" placement="top">
-            <el-button v-if="isTreeData" :icon="Share" circle @click="switchGraphStatus" />
-          </el-tooltip>
+          <el-space>
+            <el-tooltip v-if="showToolButton('refresh')" content="刷新" placement="top">
+              <el-button :icon="Refresh" circle @click="getTableList" />
+            </el-tooltip>
+            <el-tooltip v-if="showToolButton('setting') && columns.length" content="列设置" placement="top">
+              <el-button circle :icon="Operation" @click="openColSetting" />
+            </el-tooltip>
+            <el-tooltip v-if="showToolButton('search') && searchColumns?.length" content="开/关搜索" placement="top">
+              <el-button :icon="Search" circle @click="isShowSearch = !isShowSearch" />
+            </el-tooltip>
+            <el-tooltip v-if="isTreeData" content="开/关图谱" placement="top">
+              <el-button :icon="Share" circle @click="switchGraphStatus" />
+            </el-tooltip>
+          </el-space>
         </slot>
       </div>
     </div>
@@ -46,7 +42,7 @@
       ref="tableRef"
       v-bind="$attrs"
       :id="uuid"
-      :data="processTableData"
+      :data="tableData"
       :border="border"
       :row-key="rowKey"
       @selection-change="selectionChange"
@@ -59,20 +55,20 @@
           v-if="item.type && columnTypes.includes(item.type)"
           v-bind="item"
           :align="item.align ?? 'center'"
-          :reserve-selection="item.type == 'selection'"
+          :reserve-selection="item.type === 'selection'"
         >
           <template #default="scope">
             <!-- expand -->
-            <template v-if="item.type == 'expand'">
+            <template v-if="item.type === 'expand'">
               <component :is="item.render" v-bind="scope" v-if="item.render" />
               <slot v-else :name="item.type" v-bind="scope" />
             </template>
             <!-- radio -->
-            <el-radio v-if="item.type == 'radio'" v-model="radio" :label="scope.row[rowKey]">
+            <el-radio v-if="item.type === 'radio'" v-model="radio" :label="scope.row[rowKey]">
               <i></i>
             </el-radio>
             <!-- sort -->
-            <el-tag v-if="item.type == 'sort'" class="move">
+            <el-tag v-if="item.type === 'sort'" class="move">
               <el-icon>
                 <DCaret />
               </el-icon>
@@ -81,25 +77,16 @@
         </el-table-column>
         <!-- other -->
         <TableColumn v-else :column="item">
-          <template v-for="(slot, index) in Object.keys($slots)" #[slot]="scope" :key="index">
-            <template v-for="(comp, index2) in $slots.operation().slice(0, 1)" :key="index2">
-              <component :is="comp" v-bind="scope" />
-            </template>
-            <el-popover v-if="$slots.operation().length > 2" width="auto" min-width="60px" placement="top" trigger="click">
-              <div class="flex flex-col">
-                <slot :name="slot" v-bind="test(scope)" />
-              </div>
-              <template #reference>
-                <el-button type="primary">...</el-button>
-              </template>
-            </el-popover>
-            <!--            <slot :name="slot" v-bind="scope" />-->
+          <template v-for="slot in Object.keys($slots)" #[slot]="scope">
+            <slot :name="slot" v-bind="scope">
+              <el-text>{{ scope.row[item.prop] }}</el-text>
+            </slot>
           </template>
         </TableColumn>
       </template>
       <!-- 插入表格最后一行之后的插槽 -->
       <template #append>
-        <slot name="append" />
+        <slot name="append">{{ defaultAppendValue }}</slot>
       </template>
       <!-- 无数据 -->
       <template #empty>
@@ -114,8 +101,8 @@
     <!-- 图谱组件 -->
     <Graph
       ref="relationGraph"
-      v-if="tableData && isShowGraph"
-      :tree-data="processTableData"
+      v-if="(data || tableData) && isShowGraph"
+      :tree-data="data || tableData"
       :children-name="childrenName"
       :label-name="labelName"
       :label-key="labelKey"
@@ -144,7 +131,7 @@
 </template>
 
 <script setup name="ProTable">
-import { ref, watch, provide, onMounted, unref, computed, reactive, Ref } from "vue";
+import { ref, watch, provide, onMounted, unref, computed, reactive } from "vue";
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
@@ -158,23 +145,25 @@ import Graph from "./components/Graph.vue";
 import Sortable from "sortablejs";
 
 // 接受父组件参数，配置默认值
-const props = withDefaults(defineProps(), {
-  columns: () => [],
-  requestAuto: true,
-  pagination: true,
-  initParam: {},
-  border: true,
-  toolButton: true,
-  rowKey: "id",
-  searchCol: () => ({ xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }),
-  childrenName: "children",
-  enableCrossParents: false
+const props = defineProps({
+  columns: { type: Array, default: () => [] },
+  data: { type: [Array, null], default: () => null },
+  requestApi: { type: Function, default: () => {} },
+  requestError: { type: Function, default: () => {} },
+  dataCallback: { type: Function, default: () => {} },
+  title: { type: String, default: () => "", required: false },
+  requestAuto: { type: Boolean, default: () => true },
+  pagination: { type: Boolean, default: () => true },
+  initParam: { type: Object, default: () => ({}) },
+  border: { type: Boolean, default: () => true },
+  toolButton: { type: [Boolean, Array], default: () => true },
+  rowKey: { type: String, default: () => "id" },
+  searchCol: { type: [Number, Object], default: () => ({ xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }) },
+  labelKey: { type: String, default: () => "id" },
+  labelName: { type: String, default: () => "name" },
+  childrenName: { type: String, default: () => "children" },
+  enableCrossParents: { type: Boolean, default: () => false }
 });
-
-const test = scope => {
-  delete scope.$index;
-  return scope;
-};
 
 // table 实例
 const tableRef = ref();
@@ -191,6 +180,8 @@ const isShowSearch = ref(true);
 
 // 是否展示图谱
 const isShowGraph = ref(false);
+
+const defaultAppendValue = ref("");
 
 // 控制 ToolButton 显示
 const showToolButton = key => {
@@ -229,6 +220,9 @@ onMounted(() => {
   dragSort();
   props.requestAuto && getTableList();
   props.data && (pageable.value.total = props.data.length);
+  if (props.data) {
+    tableData.value = props.data;
+  }
 });
 
 // 处理表格数据
@@ -279,14 +273,14 @@ const flatColumnsFunc = (columns, flatArr = []) => {
     flatArr.push(col);
 
     // column 添加默认 isShow && isSetting && isFilterEnum 属性值
-    col.isShow = col.isShow ?? true;
-    col.isSetting = col.isSetting ?? true;
-    col.isFilterEnum = col.isFilterEnum ?? true;
+    col.isShow = col.isShow ? col.isShow : true;
+    col.isSetting = col.isSetting ? col.isSetting : true;
+    col.isFilterEnum = col.isFilterEnum ? col.isFilterEnum : true;
 
     // 设置 enumMap
     await setEnumMap(col);
   });
-  return flatArr.filter(item => item._children?.length);
+  return flatArr.filter(item => !item._children?.length);
 };
 
 // 过滤需要搜索的配置项 && 排序
@@ -301,7 +295,7 @@ searchColumns.value?.forEach((column, index) => {
   column.search.order = column.search?.order ?? index + 2;
   const key = column.search?.key ?? handleProp(column.prop);
   const defaultValue = column.search?.defaultValue;
-  if (defaultValue !== undefined && defaultValue !== null) {
+  if (defaultValue) {
     searchParam.value[key] = defaultValue;
     searchInitParam.value[key] = defaultValue;
   }
@@ -316,13 +310,25 @@ const colSetting = tableColumns.filter(item => {
 const openColSetting = () => colRef.value.openColSetting();
 
 // 定义 emit 事件
-const emit = defineEmits();
+const emit = defineEmits([
+  "search",
+  "reset",
+  "dragSort",
+  "updateAction",
+  "action",
+  "deleteAction",
+  "staticDataChange",
+  "rowClick"
+]);
 
 const _search = () => {
-  if (!isShowGraph.value) search();
-  else {
-    relationGraph.value.focusOnNode(searchParam.value[props.labelName]);
+  console.log(isShowGraph.value);
+  if (!isShowGraph.value) {
+    search();
+    return;
   }
+  const labelName = props.labelName;
+  relationGraph.value.focusOnNode(searchParam.value[labelName]);
   emit("search");
 };
 
@@ -353,7 +359,7 @@ const action = (actionStr, data) => {
 };
 
 // 表格/图谱切换
-const switchGraphStatus = () => {
+const switchGraphStatus = async () => {
   isShowGraph.value = !isShowGraph.value;
   if (isShowGraph.value) return;
   const nodes = relationGraph.value.jsonData.nodes;
@@ -363,46 +369,37 @@ const switchGraphStatus = () => {
   nodes.map((item, index) => {
     if (item.text === "表格") delete nodes[index];
   });
-  // lines.every((line, index) => {
-  //   if (line.from === "表格") delete lines[index];
-  // });
-  console.log({ nodes, lines });
 
   // 创建树结构
   let treeStructure = [];
 
   // 构建树结构
-  const buildTree = () => {
+  const buildTree = async () => {
     const map = new Map();
-
     // 初始化每个节点
     lines.forEach(line => {
       if (!map.has(line.from)) map.set(line.from, { name: line.from, children: [] });
       if (!map.has(line.to)) map.set(line.to, { name: line.to, children: [] });
     });
-
     // 构建树结构
     lines.forEach(line => {
       const parent = map.get(line.from);
       const child = map.get(line.to);
       parent.children.push(child);
     });
-
     // 获取根节点
     const rootNames = [...new Set(lines.map(line => line.from))];
     const childNames = new Set(lines.map(line => line.to));
     const rootNodes = rootNames.filter(name => !childNames.has(name));
-
     treeStructure = rootNodes.map(rootName => map.get(rootName));
   };
 
   // 将数据嵌入树状结构的函数
-  function embedDataIntoTree(treeArray, nodes) {
+  const embedDataIntoTree = async (treeArray, nodes) => {
     treeArray.forEach(tree => {
       // 查找与当前项的 name 匹配的节点
       const matchingNode = nodes.find(node => node?.text === tree.name);
       if (matchingNode) {
-        // 去掉 name 属性
         delete tree.name;
         // 如果找到匹配的节点，将其 data 放入树结构中
         delete matchingNode.data.children;
@@ -410,13 +407,13 @@ const switchGraphStatus = () => {
       }
       if (tree.children && tree.children.length > 0) embedDataIntoTree(tree.children, nodes);
     });
-  }
-
-  buildTree();
+  };
+  await buildTree();
   treeStructure = JSON.parse(JSON.stringify(treeStructure, null, 2))[0].children;
 
-  embedDataIntoTree(treeStructure, nodes);
+  await embedDataIntoTree(treeStructure, nodes);
   tableData.value = treeStructure;
+  // 兼容静态数据(非promise获取)的数据更新
   emit("staticDataChange", tableData.value);
 };
 

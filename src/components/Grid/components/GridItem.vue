@@ -6,15 +6,15 @@
 <script setup name="GridItem">
 import { computed, inject, ref, useAttrs, watch } from "vue";
 
-const props = withDefaults(defineProps(), {
-  offset: 0,
-  span: 1,
-  suffix: false,
-  xs: undefined,
-  sm: undefined,
-  md: undefined,
-  lg: undefined,
-  xl: undefined
+const props = defineProps({
+  offset: { type: Number, default: 0 },
+  span: { type: Number, default: 1 },
+  suffix: { type: Boolean, default: false },
+  xs: { type: [Number, Object], default: undefined },
+  sm: { type: [Number, Object], default: undefined },
+  md: { type: [Number, Object], default: undefined },
+  lg: { type: [Number, Object], default: undefined },
+  xl: { type: [Number, Object], default: undefined }
 });
 
 const attrs = useAttrs();

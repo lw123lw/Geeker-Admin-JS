@@ -5,7 +5,6 @@
 </template>
 
 <script setup name="radarChart">
-import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
 
 const option = {
@@ -52,5 +51,5 @@ const option = {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

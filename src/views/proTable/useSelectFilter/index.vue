@@ -41,7 +41,6 @@
 </template>
 <script setup name="useSelectFilter">
 import { ref, reactive, onMounted, watch } from "vue";
-import { User } from "@/api/interface";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
 import { useDownload } from "@/hooks/useDownload";
@@ -51,7 +50,6 @@ import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import SelectFilter from "@/components/SelectFilter/index.vue";
-import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Pointer, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
 import {
   getUserList,
@@ -108,12 +106,12 @@ const selectFilterData = reactive([
 onMounted(() => getUserRoleDict());
 const getUserRoleDict = async () => {
   const { data } = await getUserRole();
-  selectFilterData[1].options = data;
+  selectFilterData[0].options = data;
 };
 
 // 默认 selectFilter 参数
 const selectFilterValues = ref({ userStatus: "2", userRole: ["1", "3"] });
-const changeSelectFilter = (value: typeof selectFilterValues.value) => {
+const changeSelectFilter = value => {
   ElMessage.success("请注意查看请求参数变化 🤔");
   proTable.value.pageable.pageNum = 1;
   selectFilterValues.value = value;
@@ -121,7 +119,7 @@ const changeSelectFilter = (value: typeof selectFilterValues.value) => {
 
 // 默认 treeFilter 参数
 const treeFilterValues = reactive({ departmentId: ["11"] });
-const changeTreeFilter = (val) => {
+const changeTreeFilter = val => {
   ElMessage.success("请注意查看请求参数变化 🤔");
   proTable.value.pageable.pageNum = 1;
   treeFilterValues.departmentId = val;
@@ -139,13 +137,13 @@ watch(
 );
 
 // 删除用户信息
-const deleteAccount = async (params) => {
+const deleteAccount = async params => {
   await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
   proTable.value?.getTableList();
 };
 
 // 重置用户密码
-const resetPass = async (params) => {
+const resetPass = async params => {
   await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
   proTable.value?.getTableList();
 };
@@ -171,7 +169,7 @@ const batchAdd = () => {
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref(null);
-const openDrawer = (title, row: Partial = {}) => {
+const openDrawer = (title, row = {}) => {
   const params = {
     title,
     isView: title === "查看",

@@ -47,13 +47,9 @@
 
 <script setup name="dynamicForm">
 import { reactive, ref } from "vue";
-import type { FormInstance } from "element-plus";
 
 const formRef = ref();
-const dynamicValidateForm = reactive<{
-  domains[];
-  email;
-}>({
+const dynamicValidateForm = reactive({
   domains: [
     {
       key: 1,
@@ -63,12 +59,7 @@ const dynamicValidateForm = reactive<{
   email: ""
 });
 
-interface DomainItem {
-  key;
-  value;
-}
-
-const removeDomain = (item) => {
+const removeDomain = item => {
   const index = dynamicValidateForm.domains.indexOf(item);
   if (index !== -1) {
     dynamicValidateForm.domains.splice(index, 1);
@@ -82,7 +73,7 @@ const addDomain = () => {
   });
 };
 
-const submitForm = async (formEl) => {
+const submitForm = async formEl => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -93,12 +84,12 @@ const submitForm = async (formEl) => {
   });
 };
 
-const resetForm = (formEl) => {
+const resetForm = formEl => {
   if (!formEl) return;
   formEl.resetFields();
 };
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

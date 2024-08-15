@@ -33,9 +33,9 @@
 <script setup name="selectFilter">
 import { ref, watch } from "vue";
 
-const props = withDefaults(defineProps(), {
-  data: () => [],
-  defaultValues: () => ({})
+const props = defineProps({
+  data: { type: Object, default: () => {} },
+  defaultValues: { type: Object, default: () => {} }
 });
 
 // 重新接收默认值
@@ -52,9 +52,7 @@ watch(
 );
 
 // emit
-const emit = defineEmits<{
-  change: [value];
-}>();
+const emit = defineEmits(["change"]);
 
 /**
  * @description 选择筛选项
@@ -72,7 +70,7 @@ const select = (item, option) => {
     if (item.options[0].value === option.value) selected.value[item.key] = [option.value];
     // 如果选择的值已经选中了，则删除选中的值
     if (selected.value[item.key].includes(option.value)) {
-      let currentIndex = selected.value[item.key].findIndex((s) => s === option.value);
+      let currentIndex = selected.value[item.key].findIndex(s => s === option.value);
       selected.value[item.key].splice(currentIndex, 1);
       // 当全部删光时，把第第一个值选中
       if (selected.value[item.key].length === 0) selected.value[item.key] = [item.options[0].value];
@@ -88,5 +86,5 @@ const select = (item, option) => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

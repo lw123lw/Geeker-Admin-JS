@@ -10,7 +10,7 @@
 */
 const addWaterMarker = (str, parentNode, font, textColor) => {
   // 水印文字，父元素，字体，文字颜色
-  let can: HTMLCanvasElement = document.createElement("canvas");
+  let can = document.createElement("canvas");
   parentNode.appendChild(can);
   can.width = 205;
   can.height = 140;

@@ -7,7 +7,6 @@
 
 <script setup>
 import ECharts from "@/components/ECharts/index.vue";
-import { ECOption } from "@/components/ECharts/config";
 
 const data = [
   { value: 40, name: "智慧文旅平台", percentage: "40%" },
@@ -39,7 +38,7 @@ const option = {
       color: "#fff"
     },
     itemGap: 20,
-    formatter: function (name) {
+    formatter(name) {
       let text = "";
       data.forEach(val => {
         if (val.name === name) {

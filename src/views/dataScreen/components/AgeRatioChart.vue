@@ -7,13 +7,6 @@
 
 <script setup>
 import ECharts from "@/components/ECharts/index.vue";
-import { ECOption } from "@/components/ECharts/config";
-
-interface ChartProp {
-  value;
-  name;
-  percentage;
-}
 
 let data = [
   { value: 200, name: "10岁以下", percentage: "16%" },
@@ -39,9 +32,9 @@ const option = {
     top: "15px",
     itemGap: 15,
     itemWidth: 14,
-    formatter: function (name) {
+    formatter(name) {
       let text = "";
-      data.forEach((val: ChartProp) => {
+      data.forEach(val => {
         if (val.name === name) text = " " + name + "　 " + val.percentage;
       });
       return text;
@@ -62,7 +55,7 @@ const option = {
         position: "inside",
         show: true,
         color: "#fff",
-        formatter: function (params) {
+        formatter(params) {
           return params.data.percentage;
         },
         rich: {
@@ -77,7 +70,7 @@ const option = {
         shadowColor: "rgba(0, 0, 0, 0.2)",
         shadowBlur: 10
       },
-      data: data.map((val: ChartProp, index) => {
+      data: data.map((val, index) => {
         return {
           value: val.value,
           name: val.name,

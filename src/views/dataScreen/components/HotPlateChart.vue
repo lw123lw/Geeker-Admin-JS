@@ -12,7 +12,6 @@
 
 <script setup>
 import ECharts from "@/components/ECharts/index.vue";
-import { ECOption } from "@/components/ECharts/config";
 import { ranking1, ranking2, ranking3, ranking4 } from "../assets/ranking-icon.js";
 
 const data = [
@@ -184,7 +183,7 @@ const option = {
       barWidth: 12,
       itemStyle: {
         borderRadius: 30,
-        color: function (params) {
+        color(params) {
           let num = colors.length;
           return colors[params.dataIndex % num];
         }

@@ -1,5 +1,4 @@
 import { isArray } from "@/utils/is";
-import { FieldNamesProps } from "@/components/ProTable/interface";
 
 const mode = import.meta.env.VITE_ROUTER_MODE;
 
@@ -42,6 +41,26 @@ export function localRemove(key) {
  */
 export function localClear() {
   window.localStorage.clear();
+}
+
+// 判断是否数结构
+export function hasTreeStructure(arr, childrenKey = "children") {
+  if (!Array.isArray(arr)) {
+    return false;
+  }
+
+  for (const item of arr) {
+    if (typeof item === "object" && item !== null) {
+      if (Array.isArray(item[childrenKey])) {
+        return true;
+      }
+      // Recursively check for nested structures
+      if (hasTreeStructure(item[childrenKey], childrenKey)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /**
@@ -190,7 +209,7 @@ export const getAllBreadcrumbList = (menuList, parent = [], result = {}) => {
  * @param {Array} menuPathArr 菜单地址的一维数组 ['**','**']
  * @returns {Array}
  */
-export function getMenuListPath(menuList, menuPathArr= []) {
+export function getMenuListPath(menuList, menuPathArr = []) {
   for (const item of menuList) {
     if (typeof item === "object" && item.path) menuPathArr.push(item.path);
     if (item.children?.length) getMenuListPath(item.children, menuPathArr);
@@ -284,7 +303,7 @@ export function handleProp(prop) {
  * @param {String} type 过滤类型（目前只有 tag）
  * @returns {String}
  * */
-export function filterEnum(callValue, enumData?, fieldNames?: FieldNamesProps, type?: "tag") {
+export function filterEnum(callValue, enumData, fieldNames, type = "tag") {
   const value = fieldNames?.value ?? "value";
   const label = fieldNames?.label ?? "label";
   const children = fieldNames?.children ?? "children";

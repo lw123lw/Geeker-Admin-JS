@@ -6,7 +6,12 @@
 import { inject, ref, useSlots } from "vue";
 import { filterEnum, formatValue, handleProp, handleRowAccordingToProp } from "@/utils";
 
-defineProps("column");
+const props = defineProps({
+  column: {
+    type: Object,
+    default: () => ({})
+  }
+});
 
 const slots = useSlots();
 

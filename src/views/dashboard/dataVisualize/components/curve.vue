@@ -5,7 +5,6 @@
 </template>
 
 <script setup name="cure">
-import { ECOption } from "@/components/ECharts/config";
 import ECharts from "@/components/ECharts/index.vue";
 
 const curveData = [
@@ -83,7 +82,7 @@ const option = {
         interval: 0,
         color: "#a1a1a1",
         fontSize: 14,
-        formatter: function (name) {
+        formatter(name) {
           undefined;
           return name.length > 8 ? name.slice(0, 8) + "..." : name;
         }
@@ -114,7 +113,7 @@ const option = {
         color: "#a1a1a1",
         fontSize: 16,
         fontWeight: 400,
-        formatter: function (value) {
+        formatter(value) {
           if (value === 0) {
             return value + "";
           } else if (value >= 10000) {

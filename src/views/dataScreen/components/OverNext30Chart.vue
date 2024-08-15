@@ -8,7 +8,6 @@
 <script setup>
 import dayjs from "dayjs";
 import ECharts from "@/components/ECharts/index.vue";
-import { ECOption } from "@/components/ECharts/config";
 import { randomNum } from "@/utils";
 
 const initDate = () => {
@@ -72,7 +71,7 @@ const option = {
         color: "#7ec7ff",
         padding: 0,
         fontSize: 12,
-        formatter: function (data) {
+        formatter(data) {
           return data;
         }
       },
@@ -106,7 +105,7 @@ const option = {
         show: true,
         color: "#7ec7ff",
         padding: 0,
-        formatter: function (value) {
+        formatter(value) {
           if (Number(value) >= 10000) {
             value = Number(value) / 10000 + "w";
           }

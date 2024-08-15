@@ -24,7 +24,12 @@
 <script setup name="ColSetting">
 import { ref } from "vue";
 
-defineProps(["colSetting"]);
+defineProps({
+  colSetting: {
+    type: Array,
+    default: () => []
+  }
+});
 
 const drawerVisible = ref(false);
 

@@ -18,7 +18,9 @@
     >
       <div class="upload-empty">
         <slot name="empty">
-          <el-icon><Plus /></el-icon>
+          <el-icon>
+            <Plus />
+          </el-icon>
           <!-- <span>请上传图片</span> -->
         </slot>
       </div>
@@ -26,11 +28,15 @@
         <img :src="file.url" class="upload-image" />
         <div class="upload-handle" @click.stop>
           <div class="handle-icon" @click="handlePictureCardPreview(file)">
-            <el-icon><ZoomIn /></el-icon>
+            <el-icon>
+              <ZoomIn />
+            </el-icon>
             <span>查看</span>
           </div>
           <div v-if="!self_disabled" class="handle-icon" @click="handleRemove(file)">
-            <el-icon><Delete /></el-icon>
+            <el-icon>
+              <Delete />
+            </el-icon>
             <span>删除</span>
           </div>
         </div>
@@ -49,16 +55,43 @@ import { Plus } from "@element-plus/icons-vue";
 import { uploadImg } from "@/api/modules/upload";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
 
-const props = withDefaults(defineProps(), {
-  fileList: () => [],
-  drag: true,
-  disabled: false,
-  limit: 5,
-  fileSize: 5,
-  fileType: () => ["image/jpeg", "image/png", "image/gif"],
-  height: "150px",
-  width: "150px",
-  borderRadius: "8px"
+const props = defineProps({
+  fileList: {
+    type: Array,
+    default: () => []
+  },
+  drag: {
+    type: Boolean,
+    default: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  limit: {
+    type: Number,
+    default: 5
+  },
+  fileSize: {
+    type: Number,
+    default: 5
+  },
+  fileType: {
+    type: Function,
+    default: () => ["image/jpeg", "image/png", "image/gif"]
+  },
+  height: {
+    type: String,
+    default: "150px"
+  },
+  width: {
+    type: String,
+    default: "150px"
+  },
+  borderRadius: {
+    type: String,
+    default: "8px"
+  }
 });
 
 // 获取 el-form 组件上下文

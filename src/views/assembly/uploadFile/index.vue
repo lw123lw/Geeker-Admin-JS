@@ -165,8 +165,6 @@
 
 <script setup name="uploadFile">
 import { ref, reactive } from "vue";
-import { FormInstance } from "element-plus";
-import UploadImg from "@/components/Upload/Img.vue";
 import UploadImgs from "@/components/Upload/Imgs.vue";
 
 const fileList = ref([{ name: "img", url: "https://i.imgtg.com/2023/01/16/QRBHS.jpg" }]);
@@ -209,5 +207,5 @@ const submit = () => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

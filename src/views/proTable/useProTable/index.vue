@@ -4,6 +4,7 @@
       ref="proTable"
       :columns="columns"
       :request-api="getTableList"
+      :request-auto="true"
       :init-param="initParam"
       :data-callback="dataCallback"
       @drag-sort="sortTable"
@@ -28,10 +29,9 @@
           {{ scope.column.label }}
         </el-button>
       </template>
-      <!-- createTime -->
       <template #createTime="scope">
         <el-button type="primary" link @click="ElMessage.success('我是通过作用域插槽渲染的内容')">
-          {{ scope.row.createTime }}
+          {{ scope.column.createTime }}
         </el-button>
       </template>
       <!-- 表格操作 -->
@@ -47,7 +47,7 @@
   </div>
 </template>
 
-<script setup lang="tsx" name="useProTable">
+<script setup lang="jsx" name="useProTable">
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useHandleData } from "@/hooks/useHandleData";
@@ -73,6 +73,12 @@ import {
 
 const router = useRouter();
 
+const props = defineProps({
+  searchParam: {
+    type: Object,
+    default: () => ({})
+  }
+});
 // 跳转详情页
 const toDetail = () => {
   router.push(`/proTable/useProTable/detail/${Math.random().toFixed(3)}?params=detail-page`);
@@ -95,12 +101,12 @@ const dataCallback = data => {
 
 // 如果你想在请求之前对当前请求参数做一些操作，可以自定义如下函数：params 为当前所有的请求参数（包括分页），最后返回请求列表接口
 // 默认不做操作就直接在 ProTable 组件上绑定	:requestApi="getUserList"
-const getTableList = params => {
+const getTableList = async params => {
   let newParams = JSON.parse(JSON.stringify(params));
   newParams.createTime && (newParams.startTime = newParams.createTime[0]);
   newParams.createTime && (newParams.endTime = newParams.createTime[1]);
   delete newParams.createTime;
-  return getUserList(newParams);
+  return await getUserList(newParams);
 };
 
 // 页面按钮权限（按钮权限既可以使用 hooks，也可以直接使用 v-auth 指令，指令适合直接绑定在按钮上，hooks 适合根据按钮权限显示不同的内容）
@@ -123,7 +129,7 @@ const columns = reactive([
   {
     prop: "username",
     label: "用户姓名",
-    search: { el: "input", tooltip: "我是搜索提示" },
+    search: { el: "input", tooltip: "我是搜索提示", key: "username" },
     render: scope => {
       return (
         <el-button type="primary" link onClick={() => ElMessage.success("我是通过 tsx 语法渲染的内容")}>
@@ -141,7 +147,7 @@ const columns = reactive([
     enum: getUserGender,
     // 字典请求携带参数
     // enum: () => getUserGender({ id: 1 }),
-    search: { el: "select", props: { filterable: true } },
+    search: { el: "select", props: { filterable: true }, key: "gender" },
     fieldNames: { label: "genderLabel", value: "genderValue" }
   },
   {
@@ -161,14 +167,14 @@ const columns = reactive([
       }
     }
   },
-  { prop: "idCard", label: "身份证号", search: { el: "input" } },
-  { prop: "email", label: "邮箱" },
-  { prop: "address", label: "居住地址" },
+  { prop: "idCard", label: "身份证号", search: { el: "input", key: "idCard" } },
+  { prop: "email", label: "邮箱", key: "email" },
+  { prop: "address", label: "居住地址", key: "address" },
   {
     prop: "status",
     label: "用户状态",
     enum: getUserStatus,
-    search: { el: "tree-select", props: { filterable: true } },
+    search: { el: "tree-select", props: { filterable: true }, key: "status" },
     fieldNames: { label: "userLabel", value: "userStatus" },
     render: scope => {
       return (
@@ -197,16 +203,15 @@ const columns = reactive([
       el: "date-picker",
       span: 2,
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" },
-      defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"]
+      defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"],
+      key: "createTime"
     }
   },
   { prop: "operation", label: "操作", fixed: "right", width: 330 }
 ]);
 
 // 表格拖拽排序
-const sortTable = ({ newIndex, oldIndex }: { newIndex?; oldIndex? }) => {
-  console.log(newIndex, oldIndex);
-  console.log(proTable.value?.tableData);
+const sortTable = ({ newIndex, oldIndex }) => {
   ElMessage.success("修改列表排序成功");
 };
 
@@ -231,7 +236,7 @@ const resetPass = async params => {
 
 // 切换用户状态
 const changeStatus = async row => {
-  await useHandleData(changeUserStatus, { id: row.id, status: row.status == 1 ? 0 : 1 }, `切换【${row.username}】用户状态`);
+  await useHandleData(changeUserStatus, { id: row.id, status: row.status === 1 ? 0 : 1 }, `切换【${row.username}】用户状态`);
   proTable.value?.getTableList();
 };
 
@@ -256,7 +261,7 @@ const batchAdd = () => {
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref(null);
-const openDrawer = (title, row: Partial = {}) => {
+const openDrawer = (title, row) => {
   console.log({ row });
   return;
   const params = {

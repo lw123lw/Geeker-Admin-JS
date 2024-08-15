@@ -18,15 +18,21 @@
         <img :src="imageUrl" class="upload-image" />
         <div class="upload-handle" @click.stop>
           <div v-if="!self_disabled" class="handle-icon" @click="editImg">
-            <el-icon><Edit /></el-icon>
+            <el-icon>
+              <Edit />
+            </el-icon>
             <span>编辑</span>
           </div>
           <div class="handle-icon" @click="imgViewVisible = true">
-            <el-icon><ZoomIn /></el-icon>
+            <el-icon>
+              <ZoomIn />
+            </el-icon>
             <span>查看</span>
           </div>
           <div v-if="!self_disabled" class="handle-icon" @click="deleteImg">
-            <el-icon><Delete /></el-icon>
+            <el-icon>
+              <Delete />
+            </el-icon>
             <span>删除</span>
           </div>
         </div>
@@ -34,7 +40,9 @@
       <template v-else>
         <div class="upload-empty">
           <slot name="empty">
-            <el-icon><Plus /></el-icon>
+            <el-icon>
+              <Plus />
+            </el-icon>
             <!-- <span>请上传图片</span> -->
           </slot>
         </div>
@@ -54,15 +62,47 @@ import { uploadImg } from "@/api/modules/upload";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
 
 // 接受父组件参数
-const props = withDefaults(defineProps(), {
-  imageUrl: "",
-  drag: true,
-  disabled: false,
-  fileSize: 5,
-  fileType: () => ["image/jpeg", "image/png", "image/gif"],
-  height: "150px",
-  width: "150px",
-  borderRadius: "8px"
+const props = defineProps({
+  imageUrl: {
+    type: String,
+    default: ""
+  },
+  fileList: {
+    type: Array,
+    default: () => []
+  },
+  drag: {
+    type: Boolean,
+    default: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  limit: {
+    type: Number,
+    default: 5
+  },
+  fileSize: {
+    type: Number,
+    default: 5
+  },
+  fileType: {
+    type: Array,
+    default: () => ["image/jpeg", "image/png", "image/gif"]
+  },
+  height: {
+    type: String,
+    default: "150px"
+  },
+  width: {
+    type: String,
+    default: "150px"
+  },
+  borderRadius: {
+    type: String,
+    default: "8px"
+  }
 });
 
 // 生成组件唯一id

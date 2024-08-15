@@ -11,7 +11,7 @@
 	<div class="dialog-model" v-draggable></div>
 */
 const draggable = {
-  mounted: function (el) {
+  mounted(el) {
     el.style.cursor = "move";
     el.style.position = "absolute";
     el.onmousedown = function (e) {

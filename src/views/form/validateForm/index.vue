@@ -29,8 +29,8 @@
       </el-form-item>
       <el-form-item label="Resources" prop="resource">
         <el-radio-group v-model="ruleForm.resource">
-          <el-radio label="Sponsorship" />
-          <el-radio label="Venue" />
+          <el-radio value="Sponsorship" />
+          <el-radio value="Venue" />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="Activity form" prop="desc">
@@ -47,7 +47,6 @@
 <script setup name="dynamicForm">
 import { reactive, ref } from "vue";
 import { checkPhoneNumber } from "@/utils/eleValidate";
-import type { FormInstance, FormRules } from "element-plus";
 import { ElMessage } from "element-plus";
 
 const ruleFormRef = ref();
@@ -101,7 +100,7 @@ const rules = reactive({
   desc: [{ required: true, message: "Please input activity form", trigger: "blur" }]
 });
 
-const submitForm = async (formEl) => {
+const submitForm = async formEl => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -112,12 +111,12 @@ const submitForm = async (formEl) => {
   });
 };
 
-const resetForm = (formEl) => {
+const resetForm = formEl => {
   if (!formEl) return;
   formEl.resetFields();
 };
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

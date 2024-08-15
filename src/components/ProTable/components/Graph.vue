@@ -1,6 +1,6 @@
 <template>
   <div ref="page" class="graph" @click="isShowNodeMenuPanel = false">
-    <div class="graph-box">
+    <div class="graph-box" v-if="treeData">
       <RelationGraph
         class="graph-box-main"
         ref="relationGraph$"
@@ -26,14 +26,11 @@
     <div
       v-show="isShowNodeMenuPanel"
       class="rc-menu"
-      :style="{
-        left: nodeMenuPanelPosition.x + 'px',
-        top: nodeMenuPanelPosition.y + 'px'
-      }"
+      :style="{ left: nodeMenuPanelPosition.x + 'px', top: nodeMenuPanelPosition.y + 'px' }"
     >
-      <el-space :direction="'vertical'">
-        <slot name="preAction" :node-object="currentNode?.data"></slot>
-        <slot name="action" :node-object="currentNode?.data">
+      <el-space :direction="'vertical'" v-if="currentNode">
+        <slot name="preAction" :node-object="(currentNode && currentNode?.data) || null"></slot>
+        <slot name="action" :node-object="(currentNode && currentNode?.data) || null">
           <el-button type="primary" :icon="View" @click.stop="doAction('查看')">查 看</el-button>
           <el-button type="primary" :icon="EditPen" @click.stop="doAction('编辑')">编 辑</el-button>
           <el-button type="primary" :icon="Delete" @click.stop="doAction('删除')">删 除</el-button>
@@ -44,17 +41,17 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, Ref, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import RelationGraph, { RGEditingConnectController, RGEditingLineController } from "relation-graph-vue3";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 
-const props = withDefaults(defineProps(), {
-  treeData: null,
-  labelKey: "id",
-  labelName: "name",
-  childrenName: "children",
-  enableCrossParents: false
+const props = defineProps({
+  treeData: { type: Array, default: () => [] },
+  labelKey: { type: String, default: "id" },
+  labelName: { type: String, default: "name" },
+  childrenName: { type: String, default: "children" },
+  enableCrossParents: { type: Boolean, default: false }
 });
 
 const emit = defineEmits(["action"]);
@@ -69,10 +66,7 @@ const nodeMenuPanelPosition = ref({ x: 0, y: 0 });
 // 当前选择的节点
 const currentNode = ref(null);
 // 被操作的原节点
-const originalLine = ref({
-  from: "",
-  to: ""
-});
+const originalLine = ref({ from: "", to: "" });
 
 const options = ref({
   defaultExpandHolderPosition: "right",
@@ -105,16 +99,13 @@ const options = ref({
 });
 
 // 图谱数据
-const jsonData = ref({
-  rootId: "graph",
-  nodes: [],
-  lines: []
-});
+const jsonData = ref({ rootId: "graph", nodes: [], lines: [] });
 
 const graphInstance = computed(() => relationGraph$.value?.getInstance());
 
 // 设置跟节点
 const setRootNode = data => {
+  console.log({ data });
   jsonData.value.nodes.push({ id: "表格", text: "表格" });
   data?.map(item => {
     jsonData.value.lines.push({

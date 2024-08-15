@@ -7,7 +7,6 @@
 
 <script setup>
 import ECharts from "@/components/ECharts/index.vue";
-import { ECOption } from "@/components/ECharts/config";
 
 const gradientColors = ["rgba(254, 219, 101,0.1)", "rgba(0, 122, 254,0.1)", "rgba(255, 75, 122, 0.1)"];
 const annualData = [
@@ -35,15 +34,13 @@ const data = {
 const option = {
   tooltip: {
     trigger: "axis",
-    axisPointer: {
-      type: "none"
-    },
+    axisPointer: { type: "none" },
     borderWidth: 0,
     padding: 0,
     backgroundColor: "transparent",
-    formatter: (params) => {
+    formatter: params => {
       let str = "";
-      params.forEach((val: { color; seriesName; data }) => {
+      params.forEach(val => {
         str += `
           <div class="year-item">
             <span class="year-dot" style="background-color: ${val.color};"></span>
@@ -96,7 +93,7 @@ const option = {
         color: "#7ec7ff",
         padding: 0,
         fontSize: 12,
-        formatter: function (data) {
+        formatter(data) {
           return data;
         }
       },

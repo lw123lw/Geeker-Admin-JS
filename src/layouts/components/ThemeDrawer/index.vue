@@ -136,7 +136,6 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useTheme } from "@/hooks/useTheme";
 import { useGlobalStore } from "@/stores/modules/global";
-import { LayoutType } from "@/stores/interface";
 import { DEFAULT_PRIMARY } from "@/config";
 import mittBus from "@/utils/mittBus";
 import SwitchDark from "@/components/SwitchDark/index.vue";
@@ -187,5 +186,5 @@ mittBus.on("openThemeDrawer", () => (drawerVisible.value = true));
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

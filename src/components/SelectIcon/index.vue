@@ -32,11 +32,23 @@
 import { ref, computed } from "vue";
 import * as Icons from "@element-plus/icons-vue";
 
-const props = withDefaults(defineProps(["placeholder", "iconValue", "title", "clearable"]), {
-  iconValue: "",
-  title: "请选择图标",
-  clearable: true,
-  placeholder: "请选择图标"
+const props = defineProps({
+  iconValue: {
+    type: String,
+    default: ""
+  },
+  title: {
+    type: String,
+    default: "请选择图标"
+  },
+  clearable: {
+    type: Boolean,
+    default: true
+  },
+  placeholder: {
+    type: String,
+    default: "请选择图标"
+  }
 });
 
 // 重新接收一下，防止打包后 clearable 报错
@@ -77,5 +89,5 @@ const iconsList = computed(() => {
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

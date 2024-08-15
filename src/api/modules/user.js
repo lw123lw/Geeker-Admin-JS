@@ -51,7 +51,7 @@ export const exportUserInfo = params => {
 
 // 获取用户状态字典
 export const getUserStatus = () => {
-  return http.getparams(PORT1 + `/user/status`);
+  return http.get(PORT1 + `/user/status`);
 };
 
 // 获取用户性别字典

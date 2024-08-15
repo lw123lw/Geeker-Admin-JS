@@ -44,7 +44,7 @@ const globalStore = useGlobalStore();
 const keepAliveStore = useKeepAliveStore();
 
 // 刷新当前页
-const refreshCurrentPage: Function = inject("refresh");
+const refreshCurrentPage = inject("refresh");
 const refresh = () => {
   setTimeout(() => {
     route.meta.isKeepAlive && keepAliveStore.removeKeepAliveName(route.fullPath);
@@ -80,7 +80,7 @@ const closeOtherTab = () => {
 };
 
 // 关闭两侧
-const closeOnSide = (direction: "left" | "right") => {
+const closeOnSide = direction => {
   tabStore.closeTabsOnSide(route.fullPath, direction);
 };
 

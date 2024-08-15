@@ -23,7 +23,6 @@ import { useRoute, useRouter } from "vue-router";
 import { useGlobalStore } from "@/stores/modules/global";
 import { useTabsStore } from "@/stores/modules/tabs";
 import { useAuthStore } from "@/stores/modules/auth";
-import { TabsPaneContext, TabPaneName } from "element-plus";
 import MoreButton from "./components/MoreButton.vue";
 
 const route = useRoute();
@@ -53,7 +52,7 @@ watch(
       path: route.fullPath,
       name: route.name,
       close: !route.meta.isAffix,
-      isKeepAlive: route.meta.isKeepAlive as boolean
+      isKeepAlive: route.meta.isKeepAlive
     };
     tabStore.addTabs(tabsParams);
   },
@@ -92,17 +91,17 @@ const tabsDrop = () => {
 };
 
 // Tab Click
-const tabClick = (tabItem: TabsPaneContext) => {
+const tabClick = tabItem => {
   const fullPath = tabItem.props.name;
   router.push(fullPath);
 };
 
 // Remove Tab
-const tabRemove = (fullPath: TabPaneName) => {
-  tabStore.removeTabs(fullPath, fullPath == route.fullPath);
+const tabRemove = fullPath => {
+  tabStore.removeTabs(fullPath, fullPath === route.fullPath);
 };
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

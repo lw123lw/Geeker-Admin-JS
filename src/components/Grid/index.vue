@@ -5,26 +5,25 @@
 </template>
 
 <script setup name="Grid">
-import {
-  ref,
-  watch,
-  useSlots,
-  computed,
-  provide,
-  onBeforeMount,
-  onMounted,
-  onUnmounted,
-  onDeactivated,
-  onActivated,
-  VNodeArrayChildren,
-  VNode
-} from "vue";
+import { ref, watch, useSlots, computed, provide, onBeforeMount, onMounted, onUnmounted, onDeactivated, onActivated } from "vue";
 
-const props = withDefaults(defineProps(), {
-  cols: () => ({ xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }),
-  collapsed: false,
-  collapsedRows: 1,
-  gap: 0
+const props = defineProps({
+  cols: {
+    type: [Number, Object],
+    default: () => ({ xs: 1, sm: 2, md: 2, lg: 3, xl: 4 })
+  },
+  collapsed: {
+    type: Boolean,
+    default: false
+  },
+  collapsedRows: {
+    type: Number,
+    default: 1
+  },
+  gap: {
+    type: [Number, Array],
+    default: () => 0
+  }
 });
 
 onBeforeMount(() => props.collapsed && findIndex());

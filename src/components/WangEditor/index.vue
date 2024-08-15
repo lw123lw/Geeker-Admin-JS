@@ -6,7 +6,7 @@
       class="editor-content"
       :style="{ height }"
       :mode="mode"
-      :default-config="editorConfig"
+      :default-config="computedEditorConfig"
       @on-created="handleCreated"
       @on-blur="handleBlur"
     />
@@ -15,7 +15,6 @@
 
 <script setup name="WangEditor">
 import { nextTick, computed, inject, shallowRef, onBeforeUnmount } from "vue";
-import { IToolbarConfig, IEditorConfig } from "@wangeditor/editor";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { uploadImg, uploadVideo } from "@/api/modules/upload";
 import "@wangeditor/editor/dist/css/style.css";
@@ -28,23 +27,35 @@ const editorRef = shallowRef();
 const handleCreated = editor => {
   editorRef.value = editor;
 };
-
-const props = withDefaults(defineProps(["hideToolBar", "height", "mode", "editorConfig", "toolbarConfig"]), {
-  toolbarConfig: () => {
-    return {
-      excludeKeys: []
-    };
+const emit = defineEmits(["update:value"]);
+const props = defineProps({
+  toolbarConfig: {
+    type: Object,
+    default: () => {}
   },
-  editorConfig: () => {
-    return {
+  editorConfig: {
+    type: Object,
+    default: () => ({
       placeholder: "请输入内容...",
-      MENU_CONF: {}
-    };
+      MENU_CONF: { uploadImg: null, uploadVideo: null }
+    })
   },
-  height: "500px",
-  mode: "default",
-  hideToolBar: false,
-  disabled: false
+  height: {
+    type: String,
+    default: () => "500px"
+  },
+  mode: {
+    type: String,
+    default: () => "default"
+  },
+  hideToolBar: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  }
 });
 
 // 获取 el-form 组件上下文
@@ -60,10 +71,6 @@ const self_disabled = computed(() => {
 if (self_disabled.value) nextTick(() => editorRef.value.disable());
 
 // 富文本的内容监听，触发父组件改变，实现双向数据绑定
-const emit = defineEmits<{
-  "update:value": [value];
-  "check-validate": [];
-}>(["\"update:value\""]);
 const valueHtml = computed({
   get() {
     return props.value;
@@ -80,47 +87,82 @@ const valueHtml = computed({
  * @param file 上传的文件
  * @param insertFn 上传成功后的回调函数（插入到富文本编辑器中）
  * */
-props.editorConfig.MENU_CONF["uploadImage"] = {
-  async customUpload(file, insertFn) {
-    if (!uploadImgValidate(file)) return;
-    let formData = new FormData();
-    formData.append("file", file);
-    try {
-      const { data } = await uploadImg(formData);
-      insertFn(data.fileUrl);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-};
+// props.editorConfig.MENU_CONF.uploadImage = {
+//   async customUpload(file, insertFn) {
+//     if (!uploadImgValidate(file)) return;
+//     let formData = new FormData();
+//     formData.append("file", file);
+//     try {
+//       const { data } = await uploadImg(formData);
+//       insertFn(data.fileUrl);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// };
 
 // 图片上传前判断
-const uploadImgValidate = (file) => {
+const uploadImgValidate = file => {
   console.log(file);
   return true;
 };
+
+const computedEditorConfig = computed(() => {
+  return {
+    ...props.editorConfig,
+    MENU_CONF: {
+      ...props.editorConfig.MENU_CONF,
+      uploadImage: {
+        async customUpload(file, insertFn) {
+          if (!uploadImgValidate(file)) return;
+          let formData = new FormData();
+          formData.append("file", file);
+          try {
+            const { data } = await uploadImg(formData);
+            insertFn(data.fileUrl);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      },
+      uploadVideo: {
+        async customUpload(file, insertFn) {
+          if (!uploadVideoValidate(file)) return;
+          let formData = new FormData();
+          formData.append("file", file);
+          try {
+            const { data } = await uploadVideo(formData);
+            insertFn(data.fileUrl);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+    }
+  };
+});
 
 /**
  * @description 视频自定义上传
  * @param file 上传的文件
  * @param insertFn 上传成功后的回调函数（插入到富文本编辑器中）
  * */
-props.editorConfig.MENU_CONF["uploadVideo"] = {
-  async customUpload(file, insertFn) {
-    if (!uploadVideoValidate(file)) return;
-    let formData = new FormData();
-    formData.append("file", file);
-    try {
-      const { data } = await uploadVideo(formData);
-      insertFn(data.fileUrl);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-};
+// props.editorConfig.MENU_CONF.uploadVideo = {
+//   async customUpload(file, insertFn) {
+//     if (!uploadVideoValidate(file)) return;
+//     let formData = new FormData();
+//     formData.append("file", file);
+//     try {
+//       const { data } = await uploadVideo(formData);
+//       insertFn(data.fileUrl);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// };
 
 // 视频上传前判断
-const uploadVideoValidate = (file) => {
+const uploadVideoValidate = file => {
   console.log(file);
   return true;
 };
@@ -142,5 +184,5 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

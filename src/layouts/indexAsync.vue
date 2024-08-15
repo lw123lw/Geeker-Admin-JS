@@ -14,17 +14,16 @@
 </template>
 
 <script setup name="layoutAsync">
-import { computed, defineAsyncComponent, reactive, watch, type Component } from "vue";
-import { LayoutType } from "@/stores/interface";
+import { computed, reactive, watch } from "vue";
 import { useGlobalStore } from "@/stores/modules/global";
 import Loading from "@/components/Loading/index.vue";
 import ThemeDrawer from "./components/ThemeDrawer/index.vue";
 
 const LayoutComponents = {
-  vertical: defineAsyncComponent(() => import("./LayoutVertical/index.vue")),
-  classic: defineAsyncComponent(() => import("./LayoutClassic/index.vue")),
-  transverse: defineAsyncComponent(() => import("./LayoutTransverse/index.vue")),
-  columns: defineAsyncComponent(() => import("./LayoutColumns/index.vue"))
+  vertical: () => import("./LayoutVertical/index.vue"),
+  classic: () => import("./LayoutClassic/index.vue"),
+  transverse: () => import("./LayoutTransverse/index.vue"),
+  columns: () => import("./LayoutColumns/index.vue")
 };
 
 const globalStore = useGlobalStore();

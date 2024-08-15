@@ -20,7 +20,6 @@
 
 <script setup>
 import ECharts from "@/components/ECharts/index.vue";
-import { ECOption } from "@/components/ECharts/config";
 
 let data = {
   man: 0.6,

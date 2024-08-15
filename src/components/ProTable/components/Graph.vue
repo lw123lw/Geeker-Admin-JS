@@ -39,8 +39,8 @@
       :style="{ left: nodeMenuPanelPosition.x + 'px', top: nodeMenuPanelPosition.y + 'px' }"
     >
       <el-space :direction="'vertical'" v-if="currentNode">
-        <slot name="preAction" :node-object="(currentNode && currentNode?.data) || null"></slot>
-        <slot name="action" :node-object="(currentNode && currentNode?.data) || null">
+        <slot name="preAction" :node-object="currentNode?.data"></slot>
+        <slot name="action" :node-object="currentNode?.data">
           <el-button type="primary" :icon="View" @click.stop="doAction('查看')">查 看</el-button>
           <el-button type="primary" :icon="EditPen" @click.stop="doAction('编辑')">编 辑</el-button>
           <el-button type="primary" :icon="Delete" @click.stop="doAction('删除')">删 除</el-button>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import RelationGraph, { RGEditingConnectController, RGEditingLineController } from "relation-graph-vue3";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
@@ -77,7 +77,7 @@ const nodeTipsPosition = ref({ x: 0, y: 0 });
 // 节点菜单定位
 const nodeMenuPanelPosition = ref({ x: 0, y: 0 });
 // 当前选择的节点
-const currentNode = ref(null);
+const currentNode = ref({});
 // 被操作的原节点
 const originalLine = ref({ from: "", to: "" });
 
@@ -118,7 +118,6 @@ const graphInstance = computed(() => relationGraph$.value?.getInstance());
 
 // 设置跟节点
 const setRootNode = data => {
-  console.log({ data });
   jsonData.value.nodes.push({ id: "表格", text: "表格" });
   data?.map(item => {
     jsonData.value.lines.push({
@@ -176,14 +175,8 @@ const renderGraph = () => {
   resetPosition();
 };
 
-// 组件高度变化时重新定位图谱位置
-// const resizeObserver = new ResizeObserver(() => {
-//   resetPosition();
-// });
-
 onMounted(() => {
   renderGraph();
-  // if (page.value) resizeObserver.observe(page.value);
 });
 
 const showNodeTips = ($event, nodeObject) => {
@@ -202,10 +195,6 @@ const onMouseMove = $event => {
   }
   isShowNodeTips.value = false;
 };
-
-onBeforeUnmount(() => {
-  // if (page.value) resizeObserver.unobserve(page.value);
-});
 
 // 根据节点数量计算定位时间
 const time = computed(() => {
@@ -302,9 +291,7 @@ const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
         from: toNode.text,
         to: fromNode.text
       };
-      console.log("======= newLine ( Graph.vue ) =======\n", newLine);
       jsonData.value.lines.unshift(newLine);
-      console.log(jsonData.value.lines);
       return;
     }
     if (item[props.childrenName] && item[props.childrenName].length > 0) {

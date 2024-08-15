@@ -48,7 +48,7 @@
 </template>
 
 <script setup name="TreeFilter">
-import { ref, watch, onBeforeMount, nextTick } from "vue";
+import { ref, watch, nextTick, onMounted } from "vue";
 import { ElTree } from "element-plus";
 
 const props = defineProps({
@@ -67,17 +67,15 @@ const props = defineProps({
   },
   multiple: {
     type: Boolean,
-    default: false,
-    required: false
+    default: false
   },
   defaultValue: {
     type: [String, Array],
-    default: () => ""
+    default: () => []
   },
   data: {
     type: Array,
-    default: () => [],
-    required: false
+    default: () => []
   },
   requestApi: {
     type: Function,
@@ -100,20 +98,6 @@ const setSelected = () => {
   else selected.value = typeof props.defaultValue === "string" ? props.defaultValue : "";
 };
 
-onBeforeMount(async () => {
-  if (props.data?.length) {
-    treeData.value = props.data;
-    treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
-    return;
-  }
-  setSelected();
-  if (props.requestApi) {
-    const { data } = await props.requestApi();
-    treeData.value = data;
-    treeAllData.value = [{ id: "", [props.label]: "全部" }, ...data];
-  }
-});
-
 // 使用 nextTick 防止打包后赋值不生效，开发环境是正常的
 watch(
   () => props.defaultValue,
@@ -124,7 +108,7 @@ watch(
 watch(
   () => props.data,
   () => {
-    if (props.data?.length) {
+    if (props.data) {
       treeData.value = props.data;
       treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
     }
@@ -175,6 +159,22 @@ const handleNodeClick = data => {
 const handleCheckChange = () => {
   emit("change", treeRef.value?.getCheckedKeys());
 };
+
+onMounted(() => {
+  setSelected();
+  if (props.data) {
+    treeData.value = props.data;
+    treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
+  } else {
+    if (props.requestApi) {
+      props.requestApi().then(res => {
+        console.log({ res });
+        treeData.value = res.data;
+        treeAllData.value = [{ id: "", [props.label]: "全部" }, ...res.data];
+      });
+    }
+  }
+});
 
 // 暴露给父组件使用
 defineExpose({ treeData, treeAllData, treeRef });

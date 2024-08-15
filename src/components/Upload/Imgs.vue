@@ -77,7 +77,7 @@ const props = defineProps({
     default: 5
   },
   fileType: {
-    type: Function,
+    type: Array,
     default: () => ["image/jpeg", "image/png", "image/gif"]
   },
   height: {

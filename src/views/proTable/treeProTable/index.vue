@@ -3,6 +3,7 @@
     <TreeFilter
       label="name"
       title="部门列表(单选)"
+      :multiple="false"
       :data="treeFilterData"
       :default-value="initParam.departmentId"
       @change="changeTreeFilter"

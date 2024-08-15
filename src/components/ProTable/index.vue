@@ -1,4 +1,3 @@
-<!-- 📚📚📚 Pro-Table 文档: https://juejin.cn/post/7166068828202336263 -->
 <template>
   <!-- 查询表单 -->
   <SearchForm
@@ -101,8 +100,8 @@
     <!-- 图谱组件 -->
     <Graph
       ref="relationGraph"
-      v-if="(data || tableData) && isShowGraph"
-      :tree-data="data || tableData"
+      v-if="(tableData || data) && isShowGraph"
+      :tree-data="tableData || data"
       :children-name="childrenName"
       :label-name="labelName"
       :label-key="labelKey"
@@ -147,7 +146,7 @@ import Sortable from "sortablejs";
 // 接受父组件参数，配置默认值
 const props = defineProps({
   columns: { type: Array, default: () => [] },
-  data: { type: [Array, null], default: () => null },
+  data: { type: [Array, null], default: () => [] },
   requestApi: { type: Function, default: () => {} },
   requestError: { type: Function, default: () => {} },
   dataCallback: { type: Function, default: () => {} },
@@ -208,9 +207,7 @@ const {
   handleCurrentChange
 } = useTable(props.requestApi, props.initParam, props.pagination, props.dataCallback, props.requestError);
 
-if (props.data) {
-  isTreeData.value = hasTreeStructure(props.data, "children");
-}
+if (props.data.length > 0) isTreeData.value = hasTreeStructure(props.data, "children");
 
 // 清空选中数据列表
 const clearSelection = () => tableRef.value.clearSelection();
@@ -219,10 +216,8 @@ const clearSelection = () => tableRef.value.clearSelection();
 onMounted(() => {
   dragSort();
   props.requestAuto && getTableList();
+  if (props.data) tableData.value = props.data;
   props.data && (pageable.value.total = props.data.length);
-  if (props.data) {
-    tableData.value = props.data;
-  }
 });
 
 // 处理表格数据
@@ -322,10 +317,8 @@ const emit = defineEmits([
 ]);
 
 const _search = () => {
-  console.log(isShowGraph.value);
   if (!isShowGraph.value) {
-    search();
-    return;
+    return search();
   }
   const labelName = props.labelName;
   relationGraph.value.focusOnNode(searchParam.value[labelName]);
@@ -403,7 +396,7 @@ const switchGraphStatus = async () => {
         delete tree.name;
         // 如果找到匹配的节点，将其 data 放入树结构中
         delete matchingNode.data.children;
-        Object.assign(tree, matchingNode.data);
+        Object.assign(tree, matchingNode?.data);
       }
       if (tree.children && tree.children.length > 0) embedDataIntoTree(tree.children, nodes);
     });

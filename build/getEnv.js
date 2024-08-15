@@ -21,19 +21,32 @@ export function isReportMode() {
 
 // Read all environment variable configuration files to process.env
 export function wrapperEnv(envConf) {
-  const ret = [];
+  const ret = {};
 
   for (const envName of Object.keys(envConf)) {
     let realName = envConf[envName].replace(/\\n/g, "\n");
     realName = realName === "true" ? true : realName === "false" ? false : realName;
-    if (envName === "VITE_PORT") realName = Number(realName);
+
+    if (envName === "VITE_PORT") {
+      realName = Number(realName);
+    }
+
+    // 处理 VITE_PROXY
     if (envName === "VITE_PROXY") {
       try {
         realName = JSON.parse(realName);
-      } catch (error) {}
+        if (!Array.isArray(realName)) {
+          throw new Error("VITE_PROXY is not an array");
+        }
+      } catch (error) {
+        console.error(`Failed to parse VITE_PROXY: ${error.message}. Falling back to an empty array.`);
+        realName = []; // 使用空数组作为默认值
+      }
     }
-    ret.push(realName);
+
+    ret[envName] = realName;
   }
+
   return ret;
 }
 

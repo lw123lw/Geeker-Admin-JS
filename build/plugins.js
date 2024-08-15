@@ -14,33 +14,27 @@ import NextDevTools from "vite-plugin-vue-devtools";
  * 创建 vite 插件
  * @param viteEnv
  */
+// plugins.js
 export const createVitePlugins = viteEnv => {
   const { VITE_GLOB_APP_TITLE, VITE_REPORT, VITE_DEVTOOLS, VITE_PWA } = viteEnv;
   return [
     vue(),
-    // vue 可以使用 jsx/tsx 语法
     vueJsx(),
-    // devTools
     VITE_DEVTOOLS && NextDevTools({ launchEditor: "code" }),
-    // esLint 报错信息显示在浏览器界面上
     eslintPlugin(),
-    // name 可以写在 script 标签上
     vueSetupExtend({}),
-    // 注入变量到 html 文件
     createHtmlPlugin({
       inject: {
         data: { title: VITE_GLOB_APP_TITLE }
       }
     }),
-    // 使用 svg 图标
     createSvgIconsPlugin({
       iconDirs: [resolve(process.cwd(), "src/assets/icons")],
       symbolId: "icon-[dir]-[name]"
     }),
-    // vitePWA
-    VITE_PWA && createVitePwaviteEnv,
-    // 是否生成包预览，分析依赖包大小做优化处理
-    VITE_REPORT && visualizer({ filename: "stats.html", gzipSize, brotliSize })
+    // Correct the spelling here
+    VITE_PWA && createVitePwa(viteEnv), // Corrected line
+    VITE_REPORT && visualizer({ filename: "stats.html" })
   ];
 };
 

@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
   const viteEnv = wrapperEnv(env);
+  const proxyList = Array.isArray(viteEnv.VITE_PROXY) ? viteEnv.VITE_PROXY : [];
 
   return {
     base: viteEnv.VITE_PUBLIC_PATH,
@@ -43,7 +44,7 @@ export default defineConfig(({ mode }) => {
       open: viteEnv.VITE_OPEN,
       cors: true,
       // Load proxy configuration from .env.development
-      proxy: createProxy(viteEnv.VITE_PROXY)
+      proxy: createProxy(proxyList)
     },
     plugins: createVitePlugins(viteEnv),
     esbuild: {

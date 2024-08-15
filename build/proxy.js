@@ -1,22 +1,24 @@
-/**
- * 创建代理，用于解析 .env.development 代理配置
- * @param list
- */
 export function createProxy(list) {
-  const ret = {};
+  const ret = [];
+
+  // 确保 list 是一个有效的可迭代对象
+  if (!Array.isArray(list)) {
+    console.error("Proxy list is not an array:", list);
+    return ret; // 返回一个空数组
+  }
+
   for (const [prefix, target] of list) {
     const httpsRE = /^https:\/\//;
     const isHttps = httpsRE.test(target);
 
-    // https://github.com/http-party/node-http-proxy#options
-    ret[prefix] = {
+    ret.push({
       target: target,
       changeOrigin: true,
       ws: true,
       rewrite: path => path.replace(new RegExp(`^${prefix}`), ""),
-      // https is require secure=false
       ...(isHttps ? { secure: false } : {})
-    };
+    });
   }
+
   return ret;
 }

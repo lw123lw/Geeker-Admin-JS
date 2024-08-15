@@ -21,7 +21,7 @@ export function isReportMode() {
 
 // Read all environment variable configuration files to process.env
 export function wrapperEnv(envConf) {
-  const ret = {};
+  const ret = [];
 
   for (const envName of Object.keys(envConf)) {
     let realName = envConf[envName].replace(/\\n/g, "\n");
@@ -32,7 +32,7 @@ export function wrapperEnv(envConf) {
         realName = JSON.parse(realName);
       } catch (error) {}
     }
-    ret[envName] = realName;
+    ret.push(realName);
   }
   return ret;
 }

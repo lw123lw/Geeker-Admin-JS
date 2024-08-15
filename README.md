@@ -6,7 +6,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 
 ### 在线预览 👀
 
-- Link：https://admin.spicyboy.cn
+- Link：https://geeker.liwei.online/
 
 ### 代码仓库 ⭐
 

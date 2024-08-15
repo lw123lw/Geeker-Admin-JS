@@ -71,7 +71,14 @@ const columns = reactive([
   { type: "radio", label: "单选", width: 80 },
   { type: "index", label: "#", width: 80 },
   { prop: "username", label: "用户姓名", width: 120 },
-  { prop: "gender", label: "性别", width: 120, sortable: true, enum: genderType },
+  {
+    prop: "gender",
+    label: "性别",
+    width: 120,
+    sortable: true,
+    enum: genderType,
+    render: scope => (scope.row.gender === 1 ? "男" : "女")
+  },
   { prop: "idCard", label: "身份证号" },
   { prop: "email", label: "邮箱" },
   { prop: "address", label: "居住地址" },

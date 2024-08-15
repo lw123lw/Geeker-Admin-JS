@@ -77,9 +77,7 @@
         <!-- other -->
         <TableColumn v-else :column="item">
           <template v-for="slot in Object.keys($slots)" #[slot]="scope">
-            <slot :name="slot" v-bind="scope">
-              <el-text>{{ scope.row[item.prop] }}</el-text>
-            </slot>
+            <slot :name="slot" v-bind="scope" />
           </template>
         </TableColumn>
       </template>
@@ -92,7 +90,6 @@
         <div class="table-empty">
           <slot name="empty">
             <img src="@/assets/images/notData.png" alt="notData" />
-            <div>暂无数据</div>
           </slot>
         </div>
       </template>
@@ -130,7 +127,7 @@
 </template>
 
 <script setup name="ProTable">
-import { ref, watch, provide, onMounted, unref, computed, reactive } from "vue";
+import { ref, watch, provide, onMounted, unref, computed, reactive, onUnmounted } from "vue";
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
@@ -181,6 +178,8 @@ const isShowSearch = ref(true);
 const isShowGraph = ref(false);
 
 const defaultAppendValue = ref("");
+
+const showNodeLoopTimer = ref(null);
 
 // 控制 ToolButton 显示
 const showToolButton = key => {
@@ -268,9 +267,9 @@ const flatColumnsFunc = (columns, flatArr = []) => {
     flatArr.push(col);
 
     // column 添加默认 isShow && isSetting && isFilterEnum 属性值
-    col.isShow = col.isShow ? col.isShow : true;
-    col.isSetting = col.isSetting ? col.isSetting : true;
-    col.isFilterEnum = col.isFilterEnum ? col.isFilterEnum : true;
+    col.isShow = col.isShow ?? true;
+    col.isSetting = col.isSetting ?? true;
+    col.isFilterEnum = col.isFilterEnum ?? true;
 
     // 设置 enumMap
     await setEnumMap(col);
@@ -316,17 +315,38 @@ const emit = defineEmits([
   "rowClick"
 ]);
 
-const _search = () => {
+const _search = async () => {
   if (!isShowGraph.value) {
     return search();
   }
-  const labelName = props.labelName;
-  relationGraph.value.focusOnNode(searchParam.value[labelName]);
   emit("search");
+
+  // 查询node节点，若只有一个节点，则聚焦该节点，否则将循环聚焦
+  await clearInterval(showNodeLoopTimer.value);
+  const labelName = props.labelName;
+  let findArr = relationGraph.value.jsonData.nodes.filter(item => item.text.search(searchParam.value[labelName]) !== -1);
+  if (findArr.length === 1) {
+    relationGraph.value.focusOnNode(findArr[findArr.length - 1].text);
+    return;
+  }
+  let num = ref(0);
+  relationGraph.value.focusOnNode(findArr[num.value].text);
+  showNodeLoopTimer.value = setInterval(() => {
+    if (num.value === findArr.length) {
+      num.value = 0;
+    }
+    relationGraph.value.focusOnNode(findArr[num.value].text);
+    num.value++;
+  }, 2000);
 };
+
+onUnmounted(() => {
+  clearInterval(showNodeLoopTimer.value);
+});
 
 const _reset = () => {
   reset();
+  clearInterval(showNodeLoopTimer.value);
   emit("reset");
 };
 
@@ -365,7 +385,6 @@ const switchGraphStatus = async () => {
 
   // 创建树结构
   let treeStructure = [];
-
   // 构建树结构
   const buildTree = async () => {
     const map = new Map();

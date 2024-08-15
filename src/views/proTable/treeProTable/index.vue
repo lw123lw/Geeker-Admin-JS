@@ -24,7 +24,7 @@
       >
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
-          <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>
+          <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增', null)">新增用户</el-button>
         </template>
         <!-- 表格操作 -->
         <template #operation="scope">
@@ -32,13 +32,6 @@
           <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
           <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
         </template>
-        <!-- 图谱操作 -->
-        <template #graphAction="scope">
-          <el-button type="primary" :icon="View" @click="openDrawer('新增', scope.row)">新增</el-button>
-        </template>
-        <!--        <template #graphPreAction="scope">-->
-        <!--          <el-button type="primary" :icon="View" @click="openDrawer('新增', scope.row)">新增</el-button>-->
-        <!--        </template>-->
       </ProTable>
       <UserDrawer ref="drawerRef" />
       <ImportExcel ref="dialogRef" />
@@ -50,7 +43,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { genderType } from "@/utils/dict";
 import { useHandleData } from "@/hooks/useHandleData";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -118,8 +111,7 @@ const columns = reactive([
     enum: filterGenderEnum.value,
     search: {
       el: "select",
-      props: { placeholder: "请输入性别查询", filterable: true, remote: true, reserveKeyword: true, loading, remoteMethod },
-      key: "gender"
+      props: { placeholder: "请输入性别查询", filterable: true, remote: true, reserveKeyword: true, loading, remoteMethod }
     },
     render: scope => <>{scope.row.gender === 1 ? "男" : "女"}</>
   },
@@ -133,7 +125,9 @@ const columns = reactive([
     tag: true,
     enum: getUserStatus,
     search: { el: "tree-select" },
-    fieldNames: { label: "userLabel", value: "userStatus" }
+    render: scope => (
+      <el-tag type={scope.row.status === 0 ? "success" : "danger"}>{scope.row.status === 0 ? "正常" : "禁用"}</el-tag>
+    )
   },
   { prop: "createTime", label: "创建时间", width: 180 },
   { prop: "operation", label: "操作", width: 300, fixed: "right" }
@@ -162,21 +156,21 @@ const openDrawer = (title, row) => {
 onMounted(async () => {
   await getTreeFilter();
 
-  // const msg = [
-  //   "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
-  //   "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
-  //   "该页面可切换为图谱展示，详情可查看代码。"
-  // ];
+  const msg = [
+    "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
+    "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
+    "该页面可切换为图谱展示，详情可查看代码。"
+  ];
 
-  // msg.map(item => {
-  //   setTimeout(() => {
-  //     ElNotification({
-  //       title: "提示",
-  //       message: item,
-  //       type: "info",
-  //       duration: 10000
-  //     });
-  //   }, 100);
-  // });
+  msg.map(item => {
+    setTimeout(() => {
+      ElNotification({
+        title: "提示",
+        message: item,
+        type: "info",
+        duration: 10000
+      });
+    }, 100);
+  });
 });
 </script>

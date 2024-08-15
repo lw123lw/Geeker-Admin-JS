@@ -160,20 +160,20 @@ const handleCheckChange = () => {
   emit("change", treeRef.value?.getCheckedKeys());
 };
 
-onMounted(() => {
+onMounted(async () => {
   setSelected();
   if (props.data.length > 0) {
     treeData.value = props.data;
     treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
-  } else {
-    console.log({ props });
-    if (props.requestApi) {
-      props.requestApi().then(res => {
-        console.log({ res });
-        treeData.value = res.data;
-        treeAllData.value = [{ id: "", [props.label]: "全部" }, ...res.data];
-      });
-    }
+    return;
+  }
+  try {
+    const response = await props.requestApi();
+    const { data } = response;
+    treeData.value = data;
+    treeAllData.value = [{ id: "", [props.label]: "全部" }, ...data];
+  } catch (error) {
+    console.error("Error fetching data:", error);
   }
 });
 

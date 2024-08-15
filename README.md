@@ -4,17 +4,15 @@
 
 Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台管理框架，使用目前最新技术栈开发。项目提供强大的 [ProTable](https://juejin.cn/post/7166068828202336263) 组件，在一定程度上提高您的开发效率。另外本项目还封装了一些常用组件、Hooks、指令、动态路由、按钮级别权限控制等功能。
 
-### React 版本 🔥
-
-- 有需要请加底部微信了解、购买
-
-- Link：https://pro.spicyboy.cn
-
 ### 在线预览 👀
 
 - Link：https://admin.spicyboy.cn
 
 ### 代码仓库 ⭐
+
+- Gitee：https://gitee.com/haimashale/geeker-admin-js
+
+### TS版本代码仓库 ⭐
 
 - Gitee：https://gitee.com/HalseySpicy/Geeker-Admin
 - GitHub：https://github.com/HalseySpicy/Geeker-Admin
@@ -27,10 +25,9 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 
 ### 项目功能 🔨
 
-- 使用 Vue3.4 + TypeScript 开发，单文件组件**＜script setup＞**
-- 采用 Vite5 作为项目开发、打包工具（配置 gzip/brotli 打包、tsx 语法、跨域代理…）
+- 使用 Vue3.4，单文件组件**＜script setup＞**
+- 采用 Vite5 作为项目开发、打包工具（配置 gzip/brotli 打包、jsx 语法、跨域代理…）
 - 使用 Pinia 替代 Vuex，轻量、简单、易用，集成 Pinia 持久化插件
-- 使用 TypeScript 对 Axios 整个二次封装（请求拦截、取消、常用请求封装…）
 - 基于 Element 二次封装 [ProTable](https://juejin.cn/post/7166068828202336263) 组件，表格页面全部为配置项 Columns
 - 支持 Element 组件大小切换、多主题布局、暗黑模式、i18n 国际化
 - 使用 VueRouter 配置动态路由权限拦截、路由懒加载，支持页面按钮权限控制
@@ -45,9 +42,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 
 ```text
 # Gitee
-git clone https://gitee.com/HalseySpicy/Geeker-Admin.git
-# GitHub
-git clone https://github.com/HalseySpicy/Geeker-Admin.git
+git clone https://gitee.com/haimashale/geeker-admin-js.git
 ```
 
 - **Install：**

@@ -9,6 +9,7 @@
         :on-line-click="onLineClick"
         :on-canvas-click="onCanvasClick"
         @before-create-line="beforeCreateLine"
+        @mousemove="onMouseMove"
       >
         <template #node="{ node }">
           <div class="line-text" @click="showNodeMenus(node, $event)" @contextmenu.prevent.stop="showNodeMenus(node, $event)">
@@ -18,6 +19,15 @@
         <template #graph-plug>
           <RGEditingConnectController />
           <RGEditingLineController />
+          <slot name="tip">
+            <div
+              v-if="isShowNodeTips"
+              class="c-tips"
+              :style="{ left: nodeTipsPosition.x + 'px', top: nodeTipsPosition.y + 'px' }"
+            >
+              <div>节点名称: {{ currentNode?.text }}</div>
+            </div>
+          </slot>
         </template>
       </RelationGraph>
     </div>
@@ -61,6 +71,9 @@ const page = ref();
 const relationGraph$ = ref();
 // 是否展示节点菜单
 const isShowNodeMenuPanel = ref(false);
+// 是否展示节点提示
+const isShowNodeTips = ref(false);
+const nodeTipsPosition = ref({ x: 0, y: 0 });
 // 节点菜单定位
 const nodeMenuPanelPosition = ref({ x: 0, y: 0 });
 // 当前选择的节点
@@ -172,6 +185,23 @@ onMounted(() => {
   renderGraph();
   // if (page.value) resizeObserver.observe(page.value);
 });
+
+const showNodeTips = ($event, nodeObject) => {
+  const _base_position = graphInstance.value.options.fullscreen ? { x: 0, y: 0 } : graphInstance.value.getBoundingClientRect();
+  currentNode.value = nodeObject;
+  nodeTipsPosition.value.x = $event.clientX - _base_position.x + 10;
+  nodeTipsPosition.value.y = $event.clientY - _base_position.y + 10;
+};
+
+const onMouseMove = $event => {
+  const node = graphInstance.value.isNode($event.target);
+  if (node) {
+    showNodeTips($event, node);
+    isShowNodeTips.value = true;
+    return;
+  }
+  isShowNodeTips.value = false;
+};
 
 onBeforeUnmount(() => {
   // if (page.value) resizeObserver.unobserve(page.value);
@@ -340,5 +370,21 @@ defineExpose({
   font-size: 23px;
   font-weight: bold;
   line-height: 24px;
+}
+.c-tips {
+  position: absolute;
+  z-index: 999;
+  width: 200px;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #333333;
+  border: #eeeeee solid 1px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px #cccccc;
+  & > div {
+    padding-left: 10px;
+    font-size: 12px;
+    line-height: 25px;
+  }
 }
 </style>

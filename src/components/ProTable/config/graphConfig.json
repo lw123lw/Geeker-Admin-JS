@@ -1,0 +1,29 @@
+{
+  "defaultExpandHolderPosition": "right",
+  "allowSwitchLineShape": true,
+  "allowSwitchJunctionPoint": true,
+  "defaultJunctionPoint": "border",
+  "defaultLineShape": 6,
+  "defaultLineWidth": 3,
+  "allowShowMiniToolBar": true,
+  "maxLayoutTimes": 20,
+  "moveToCenterWhenRefresh": false,
+  "zoomToFitWhenRefresh": true,
+  "useAnimationWhenRefresh": true,
+  "hideNodeContentByZoom": false,
+  "defaultLineColor": "#b28a60",
+  "layouts": [
+    {
+      "label": "Center",
+      "layoutName": "force",
+      "maxLayoutTimes": 300,
+      "defaultNodeWidth": 300,
+      "defaultNodeHeight": 300,
+      "allowSwitchLineShape": true,
+      "zoomToFitWhenRefresh": true,
+      "checkedLineColor": "#ff0000",
+      "force_node_repulsion": 0.3,
+      "force_line_elastic": 0.8
+    }
+  ]
+}

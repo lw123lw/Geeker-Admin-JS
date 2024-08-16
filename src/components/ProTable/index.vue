@@ -111,6 +111,9 @@
       <template #preAction="{ nodeObject }">
         <slot name="graphPreAction" :node-object="nodeObject"></slot>
       </template>
+      <template #tip="{ nodeObject }">
+        <slot name="tip" :node-object="nodeObject" />
+      </template>
     </Graph>
     <!-- 分页组件 -->
     <slot name="pagination">

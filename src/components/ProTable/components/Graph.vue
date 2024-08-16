@@ -19,15 +19,16 @@
         <template #graph-plug>
           <RGEditingConnectController />
           <RGEditingLineController />
-          <slot name="tip">
-            <div
-              v-if="isShowNodeTips"
-              class="c-tips"
-              :style="{ left: nodeTipsPosition.x + 'px', top: nodeTipsPosition.y + 'px' }"
-            >
+          <!-- tip显示，显示除了虚设的根节点 -->
+          <div
+            v-if="isShowNodeTips && currentNode?.text !== ROOT_NAME"
+            class="c-tips"
+            :style="{ left: nodeTipsPosition.x + 'px', top: nodeTipsPosition.y + 'px' }"
+          >
+            <slot name="tip" :node-object="currentNode?.data">
               <div>节点名称: {{ currentNode?.text }}</div>
-            </div>
-          </slot>
+            </slot>
+          </div>
         </template>
       </RelationGraph>
     </div>
@@ -52,9 +53,10 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
-import RelationGraph, { RGEditingConnectController, RGEditingLineController } from "relation-graph-vue3";
+import RelationGraph, { RGEditingConnectController, RGEditingLineController, RGMiniView } from "relation-graph-vue3";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
+import graphConfig from "../config/graphConfig.json";
 
 const props = defineProps({
   treeData: { type: Array, default: () => [] },
@@ -67,61 +69,46 @@ const props = defineProps({
 const emit = defineEmits(["action"]);
 
 const page = ref();
-// 图谱实例
-const relationGraph$ = ref();
-// 是否展示节点菜单
-const isShowNodeMenuPanel = ref(false);
-// 是否展示节点提示
-const isShowNodeTips = ref(false);
+const relationGraph$ = ref(); // 图谱实例
+const ROOT_NAME = "表格"; // 根节点名称
+const options = ref(graphConfig); // 图谱配置
+const isShowNodeTips = ref(false); // 是否展示节点提示
+const isShowNodeMenuPanel = ref(false); // 是否展示节点菜单
 const nodeTipsPosition = ref({ x: 0, y: 0 });
-// 节点菜单定位
-const nodeMenuPanelPosition = ref({ x: 0, y: 0 });
-// 当前选择的节点
-const currentNode = ref({});
-// 被操作的原节点
-const originalLine = ref({ from: "", to: "" });
+const nodeMenuPanelPosition = ref({ x: 0, y: 0 }); // 节点菜单定位
+const currentNode = ref({}); // 当前选择的节点
+const originalLine = ref({ from: "", to: "" }); // 被操作的原节点
+const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
 
-const options = ref({
-  defaultExpandHolderPosition: "right",
-  allowSwitchLineShape: true, //    是否在工具栏中显示切换线条形状的按钮
-  allowSwitchJunctionPoint: true, // 是否在工具栏中显示切换连接点位置的按钮
-  defaultJunctionPoint: "border", // 默认的连线与节点接触的方式（border:边缘/ltrb:上下左右/tb:上下/lr:左右）当布局为树状布局时应使用tb或者lr，这样才会好看
-  defaultLineShape: 6, //           默认的线条样式 int：1-6
-  defaultLineWidth: 3, //           默认的线条粗细（像素）
-  allowShowMiniToolBar: true, //    是否展示右侧工具栏
-  maxLayoutTimes: 20,
-  moveToCenterWhenRefresh: false,
-  zoomToFitWhenRefresh: true,
-  useAnimationWhenRefresh: true,
-  hideNodeContentByZoom: false,
-  defaultLineColor: "#b28a60",
-  layouts: [
-    {
-      label: "Center",
-      layoutName: "force",
-      maxLayoutTimes: 300,
-      defaultNodeWidth: 300,
-      defaultNodeHeight: 300,
-      allowSwitchLineShape: true,
-      zoomToFitWhenRefresh: true,
-      checkedLineColor: "#ff0000",
-      force_node_repulsion: 0.3,
-      force_line_elastic: 0.8
-    }
-  ]
+const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
+
+// 监听外部数据变化，重新渲染图谱
+watch(
+  () => props.treeData,
+  () => renderGraph(),
+  { deep: true }
+);
+
+// 根据节点数量计算定位时间
+const time = computed(() => {
+  return Math.ceil(jsonData.value?.lines?.length / 20) * 1000;
 });
 
-// 图谱数据
-const jsonData = ref({ rootId: "graph", nodes: [], lines: [] });
-
-const graphInstance = computed(() => relationGraph$.value?.getInstance());
+const resetPosition = () => {
+  graphInstance.value.setJsonData(jsonData.value);
+  setTimeout(async () => {
+    graphInstance.value.setZoom(100);
+    await graphInstance.value.moveToCenter();
+    await graphInstance.value.zoomToFit();
+  }, time.value);
+};
 
 // 设置跟节点
 const setRootNode = data => {
-  jsonData.value.nodes.push({ id: "表格", text: "表格" });
+  jsonData.value.nodes.push({ id: ROOT_NAME, text: ROOT_NAME });
   data?.map(item => {
     jsonData.value.lines.push({
-      from: "表格",
+      from: ROOT_NAME,
       to: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item)
     });
   });
@@ -148,35 +135,17 @@ const processGraphData = data => {
   });
 };
 
-// 监听外部数据变化，重新渲染图谱
-watch(
-  () => props.treeData,
-  () => renderGraph(),
-  { deep: true }
-);
-
-// 重置图谱位置
-const resetPosition = () => {
-  graphInstance.value.setJsonData(jsonData.value);
-  setTimeout(async () => {
-    graphInstance.value.setZoom(100);
-    await graphInstance.value.moveToCenter();
-    await graphInstance.value.zoomToFit();
-  }, time.value);
-};
-
 // 渲染图谱
 const renderGraph = () => {
   jsonData.value.nodes = [];
   jsonData.value.lines = [];
-  console.log({ props });
   setRootNode(props?.treeData);
   processGraphData(props?.treeData);
   resetPosition();
 };
 
-onMounted(() => {
-  renderGraph();
+onMounted(async () => {
+  await renderGraph();
 });
 
 const showNodeTips = ($event, nodeObject) => {
@@ -196,17 +165,13 @@ const onMouseMove = $event => {
   isShowNodeTips.value = false;
 };
 
-// 根据节点数量计算定位时间
-const time = computed(() => {
-  return Math.ceil(jsonData.value?.lines?.length / 20) * 1000;
-});
-
 // 显示 / 隐藏节点菜单
 const showNodeMenus = (nodeObject, $event) => {
-  console.log({ nodeObject });
+  isShowNodeTips.value = false;
   currentNode.value = nodeObject;
-  nodeMenuPanelPosition.value.x = $event.clientX;
-  nodeMenuPanelPosition.value.y = $event.clientY;
+  // -3的目的是为了在鼠标右键节点的时候，显示菜单的同时，鼠标指针还能在菜单上，防止tip还能显示
+  nodeMenuPanelPosition.value.x = $event.clientX - 3;
+  nodeMenuPanelPosition.value.y = $event.clientY - 3;
   isShowNodeMenuPanel.value = true;
 };
 
@@ -241,19 +206,14 @@ const onNodeClick = nodeObject => {
       });
     });
 };
-/** TODO 连线点击事件 */
+/* 连线点击事件 */
 const onLineClick = (lineObject, linkObject) => {
-  console.log({ lineObject, linkObject });
-  originalLine.value = {
-    from: lineObject.from,
-    to: lineObject.to
-  };
+  originalLine.value = { from: lineObject.from, to: lineObject.to };
   graphInstance.value.setEditingLine(lineObject, linkObject);
 };
 
 const onCanvasClick = () => {
-  const clickedNodeChildrenLines = graphInstance.value.getLinks();
-  clickedNodeChildrenLines.forEach(link => {
+  graphInstance.value.getLinks().clickedNodeChildrenLines.forEach(link => {
     link.relations.forEach(line => {
       line.color = "#b28a60";
       line.fontColor = "#b28a60";
@@ -263,9 +223,7 @@ const onCanvasClick = () => {
 };
 
 // 恢复线条
-const replyLine = () => {
-  graphInstance.value.addLines([originalLine.value]);
-};
+const replyLine = () => graphInstance.value.addLines([originalLine.value]);
 
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   const fromNode = rgActionParams.fromNode;
@@ -275,34 +233,22 @@ const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
     if (fromNode.text !== originalLine.value.from) {
       setEventReturnValue(true);
       replyLine();
-      ElNotification({
-        title: "警告",
-        message: "禁止跨父节点连线",
-        type: "warning"
-      });
-      return;
+      return ElNotification({ title: "警告", message: "禁止跨父节点连线", type: "warning" });
     }
   }
 
   jsonData.value.lines.map((item, index) => {
     if (item?.to === fromNode?.text) {
       delete jsonData.value.lines[index];
-      const newLine = {
-        from: toNode.text,
-        to: fromNode.text
-      };
+      const newLine = { from: toNode.text, to: fromNode.text };
       jsonData.value.lines.unshift(newLine);
       return;
     }
-    if (item[props.childrenName] && item[props.childrenName].length > 0) {
-      beforeCreateLine(rgActionParams);
-    }
+    if (item[props.childrenName] && item[props.childrenName].length > 0) beforeCreateLine(rgActionParams);
   });
 };
 
-const focusOnNode = node => {
-  graphInstance.value.focusNodeById(node);
-};
+const focusOnNode = node => graphInstance.value.focusNodeById(node);
 
 defineExpose({
   jsonData: jsonData.value,
@@ -361,10 +307,10 @@ defineExpose({
 .c-tips {
   position: absolute;
   z-index: 999;
-  width: 200px;
+  width: auto;
   padding: 10px;
   color: #ffffff;
-  background-color: #333333;
+  background-color: #444444;
   border: #eeeeee solid 1px;
   border-radius: 10px;
   box-shadow: 0 0 8px #cccccc;

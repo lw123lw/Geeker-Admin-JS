@@ -16,7 +16,6 @@ const props = defineProps({
 const slots = useSlots();
 
 const enumMap = inject("enumMap", ref(new Map()));
-// console.log({ enumMap });
 
 // 渲染表格数据
 const renderCellData = (item, scope) => {
@@ -33,7 +32,6 @@ const getTagType = (item, scope) => {
 };
 
 const RenderTableColumn = item => {
-  // console.log({ item, slots });
   return (
     <>
       {item.isShow && (

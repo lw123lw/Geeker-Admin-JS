@@ -29,12 +29,22 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 - 采用 Vite5 作为项目开发、打包工具（配置 gzip/brotli 打包、jsx 语法、跨域代理…）
 - 使用 Pinia 替代 Vuex，轻量、简单、易用，集成 Pinia 持久化插件
 - 基于 Element 二次封装 [ProTable](https://juejin.cn/post/7166068828202336263) 组件，表格页面全部为配置项 Columns
+- 支持 ProTable 树状表格图谱化展示
 - 支持 Element 组件大小切换、多主题布局、暗黑模式、i18n 国际化
 - 使用 VueRouter 配置动态路由权限拦截、路由懒加载，支持页面按钮权限控制
 - 使用 KeepAlive 对页面进行缓存，支持多级嵌套路由缓存
 - 常用自定义指令开发（权限、复制、水印、拖拽、节流、防抖、长按…）
 - 使用 Prettier 统一格式化代码，集成 ESLint、Stylelint 代码校验规范
 - 使用 husky、lint-staged、commitlint、czg、cz-git 规范提交信息
+
+### 树状表格图谱功能列表
+
+- 数据层级关系可视化调整，允许在 ProTable 组件配置是否允许跨层级展示，数据层级调整完成切换到表格将自动调整原数据层级关系
+- 图谱右键功能菜单，可自定义实现所需功能，默认展示详情、编辑、删除按钮
+- 图谱的搜索引用 ProTable 的搜索框实现，可模糊搜索，若查到多条结果则依次定位到节点并自动选中展示
+- 图谱自动调整位置，支持导出为png图片，可全屏展示
+- ProTable 图谱功能展示
+  [视频](https://cloth-mp.oss-cn-shanghai.aliyuncs.com/CleanShot%202024-08-16%20at%2021.48.37.mp4)
 
 ### 安装使用步骤 📔
 

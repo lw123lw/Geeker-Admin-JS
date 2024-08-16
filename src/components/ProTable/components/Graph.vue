@@ -71,6 +71,7 @@ const emit = defineEmits(["action"]);
 const page = ref();
 const relationGraph$ = ref(); // 图谱实例
 const ROOT_NAME = "表格"; // 根节点名称
+const LINE_DEFAULT_COLOR = "#b28a60";
 const options = ref(graphConfig); // 图谱配置
 const isShowNodeTips = ref(false); // 是否展示节点提示
 const isShowNodeMenuPanel = ref(false); // 是否展示节点菜单
@@ -187,8 +188,8 @@ const onNodeClick = nodeObject => {
   const clickedNodeChildrenLines = graphInstance.value.getLinks();
   clickedNodeChildrenLines.forEach(link => {
     link.relations.forEach(line => {
-      line.color = "#b28a60";
-      line.fontColor = "#b28a60";
+      line.color = LINE_DEFAULT_COLOR;
+      line.fontColor = LINE_DEFAULT_COLOR;
       line.lineWidth = line.data.originLineWidth;
     });
   });
@@ -213,10 +214,10 @@ const onLineClick = (lineObject, linkObject) => {
 };
 
 const onCanvasClick = () => {
-  graphInstance.value.getLinks().clickedNodeChildrenLines.forEach(link => {
+  graphInstance.value.getLinks().forEach(link => {
     link.relations.forEach(line => {
-      line.color = "#b28a60";
-      line.fontColor = "#b28a60";
+      line.color = LINE_DEFAULT_COLOR;
+      line.fontColor = LINE_DEFAULT_COLOR;
       line.lineWidth = line.data.originLineWidth;
     });
   });

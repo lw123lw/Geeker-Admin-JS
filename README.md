@@ -11,6 +11,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 ### 代码仓库 ⭐
 
 - Gitee：https://gitee.com/haimashale/geeker-admin-js
+- GitHub：https://github.com/lw123lw/Geeker-Admin-JS
 
 ### TS版本代码仓库 ⭐
 
@@ -53,6 +54,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 ```text
 # Gitee
 git clone https://gitee.com/haimashale/geeker-admin-js.git
+git clone https://github.com/lw123lw/Geeker-Admin-JS
 ```
 
 - **Install：**

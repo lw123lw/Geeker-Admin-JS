@@ -46,7 +46,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 - 图谱自动调整位置，支持导出为png图片，可全屏展示
 - ProTable 图谱功能展示
 
-![video](https://gitee.com/haimashale/geeker-admin-js/blob/master/md-resources/protable-graph.gif)
+![video](https://github.com/lw123lw/Geeker-Admin-JS/blob/master/md-resources/protable-graph.gif)
 
 ### 安装使用步骤 📔
 

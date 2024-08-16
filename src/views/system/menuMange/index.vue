@@ -8,7 +8,7 @@
       :columns="columns"
       :data="menuData"
       :request-auto="false"
-      :enable-cross-parents="false"
+      :enable-cross-parents="true"
       label-name="meta.title"
       @static-data-change="staticDataChange"
     >

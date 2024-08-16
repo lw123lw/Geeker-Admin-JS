@@ -45,7 +45,8 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 - 图谱的搜索引用 ProTable 的搜索框实现，可模糊搜索，若查到多条结果则依次定位到节点并自动选中展示
 - 图谱自动调整位置，支持导出为png图片，可全屏展示
 - ProTable 图谱功能展示
-  [视频](./md-resources/ptotable-gaph0816.mp4)
+
+![video](https://gitee.com/haimashale/geeker-admin-js/blob/master/md-resources/protable-graph.gif)
 
 ### 安装使用步骤 📔
 

@@ -37,7 +37,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 - 使用 Prettier 统一格式化代码，集成 ESLint、Stylelint 代码校验规范
 - 使用 husky、lint-staged、commitlint、czg、cz-git 规范提交信息
 
-### 树状表格图谱功能列表
+### 树状表格图谱功能列表 🚙
 
 - 数据层级关系可视化调整，允许在 ProTable 组件配置是否允许跨层级展示，数据层级调整完成切换到表格将自动调整原数据层级关系
 - 图谱右键功能菜单，可自定义实现所需功能，默认展示详情、编辑、删除按钮

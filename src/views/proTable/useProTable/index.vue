@@ -70,6 +70,7 @@ import {
   getUserStatus,
   getUserGender
 } from "@/api/modules/user";
+import dayjs from "dayjs";
 
 const router = useRouter();
 
@@ -148,7 +149,10 @@ const columns = reactive([
     // 字典请求携带参数
     // enum: () => getUserGender({ id: 1 }),
     search: { el: "select", props: { filterable: true }, key: "gender" },
-    fieldNames: { label: "genderLabel", value: "genderValue" }
+    fieldNames: { label: "genderLabel", value: "genderValue" },
+    render: scope => {
+      return <el-text>{scope.row.gender === 1 ? "男" : "女"}</el-text>;
+    }
   },
   {
     // 多级 prop
@@ -204,6 +208,9 @@ const columns = reactive([
       span: 2,
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" },
       defaultValue: ["2022-11-12 11:35:00", "2022-12-12 11:35:00"]
+    },
+    render: scope => {
+      return <>{dayjs(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss")}</>;
     }
   },
   { prop: "operation", label: "操作", fixed: "right", width: 330 }

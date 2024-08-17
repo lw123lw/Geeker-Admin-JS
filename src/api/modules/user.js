@@ -55,8 +55,8 @@ export const getUserStatus = () => {
 };
 
 // 获取用户性别字典
-export const getUserGender = () => {
-  return http.get(PORT1 + `/user/gender`);
+export const getUserGender = async () => {
+  return await http.get(PORT1 + `/user/gender`);
 };
 
 // 获取用户部门列表

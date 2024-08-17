@@ -21,8 +21,8 @@
           <RGEditingLineController />
           <!-- tip显示，显示除了虚设的根节点 -->
           <div
-            v-if="isShowNodeTips && currentNode?.text !== ROOT_NAME"
             class="c-tips"
+            v-if="isShowNodeTips && currentNode?.text !== ROOT_NAME && showTip"
             :style="{ left: nodeTipsPosition.x + 'px', top: nodeTipsPosition.y + 'px' }"
           >
             <slot name="tip" :node-object="currentNode?.data">
@@ -63,6 +63,7 @@ const props = defineProps({
   labelKey: { type: String, default: "id" },
   labelName: { type: String, default: "name" },
   childrenName: { type: String, default: "children" },
+  showTip: { type: Boolean, default: true },
   enableCrossParents: { type: Boolean, default: false }
 });
 
@@ -158,18 +159,70 @@ const showNodeTips = ($event, nodeObject) => {
 
 const onMouseMove = $event => {
   const node = graphInstance.value.isNode($event.target);
+  console.log({ node });
   if (node) {
     showNodeTips($event, node);
     isShowNodeTips.value = true;
+    showNodeRelationShip(node);
     return;
+  } else {
+    onCanvasClick();
   }
   isShowNodeTips.value = false;
+};
+
+const showNodeRelationShip = nodeObject => {
+  const clickedNodeChildrenLines = graphInstance.value.getLinks();
+  const clickedNodeChildrenNodes = graphInstance.value.getNodes();
+
+  clickedNodeChildrenLines.forEach(link => {
+    link.relations.forEach(line => {
+      line.opacity = 1;
+      line.color = LINE_DEFAULT_COLOR;
+      line.fontColor = LINE_DEFAULT_COLOR;
+      line.lineWidth = line.data.originLineWidth;
+    });
+  });
+  clickedNodeChildrenNodes.every(node => (node.opacity = 0.4));
+
+  let hasRelationShipNodes = new Set();
+  // 让与{nodeObject}相关的所有连线高亮
+  clickedNodeChildrenLines
+    .filter(link => link.fromNode === nodeObject || link.toNode === nodeObject)
+    .forEach(link => {
+      link.relations.forEach(line => {
+        line.data.orignColor = line.color;
+        line.data.orignFontColor = line.fontColor || line.color;
+        line.data.orignLineWidth = 3;
+        line.opacity = 1;
+        line.color = LINE_DEFAULT_COLOR;
+        line.fontColor = LINE_DEFAULT_COLOR;
+        line.lineWidth = 3;
+      });
+      hasRelationShipNodes.add(link.fromNode.id);
+      hasRelationShipNodes.add(link.toNode.id);
+    });
+  clickedNodeChildrenLines
+    .filter(link => link.fromNode !== nodeObject && link.toNode !== nodeObject)
+    .forEach(link => {
+      link.relations.forEach(line => {
+        line.opacity = 0.4;
+      });
+    });
+  clickedNodeChildrenNodes.forEach(node => {
+    if (hasRelationShipNodes.has(node.id)) {
+      node.opacity = 1;
+    } else {
+      node.opacity = 0.2;
+    }
+  });
 };
 
 // 显示 / 隐藏节点菜单
 const showNodeMenus = (nodeObject, $event) => {
   isShowNodeTips.value = false;
   currentNode.value = nodeObject;
+  showNodeRelationShip(nodeObject);
   // -3的目的是为了在鼠标右键节点的时候，显示菜单的同时，鼠标指针还能在菜单上，防止tip还能显示
   nodeMenuPanelPosition.value.x = $event.clientX - 3;
   nodeMenuPanelPosition.value.y = $event.clientY - 3;
@@ -185,27 +238,7 @@ const doAction = actionName => {
 // 节点点击事件
 const onNodeClick = nodeObject => {
   currentNode.value = nodeObject;
-  const clickedNodeChildrenLines = graphInstance.value.getLinks();
-  clickedNodeChildrenLines.forEach(link => {
-    link.relations.forEach(line => {
-      line.color = LINE_DEFAULT_COLOR;
-      line.fontColor = LINE_DEFAULT_COLOR;
-      line.lineWidth = line.data.originLineWidth;
-    });
-  });
-  // 让与{nodeObject}相关的所有连线高亮
-  clickedNodeChildrenLines
-    .filter(link => link.fromNode === nodeObject || link.toNode === nodeObject)
-    .forEach(link => {
-      link.relations.forEach(line => {
-        line.data.orignColor = line.color;
-        line.data.orignFontColor = line.fontColor || line.color;
-        line.data.orignLineWidth = 3;
-        line.color = "#ff0000";
-        line.fontColor = "#ff0000";
-        line.lineWidth = 3;
-      });
-    });
+  showNodeRelationShip(nodeObject);
 };
 /* 连线点击事件 */
 const onLineClick = (lineObject, linkObject) => {
@@ -216,11 +249,13 @@ const onLineClick = (lineObject, linkObject) => {
 const onCanvasClick = () => {
   graphInstance.value.getLinks().forEach(link => {
     link.relations.forEach(line => {
+      line.opacity = 1;
       line.color = LINE_DEFAULT_COLOR;
       line.fontColor = LINE_DEFAULT_COLOR;
       line.lineWidth = line.data.originLineWidth;
     });
   });
+  graphInstance.value.getNodes().forEach(node => (node.opacity = 1));
 };
 
 // 恢复线条

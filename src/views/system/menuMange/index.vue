@@ -10,6 +10,7 @@
       :request-auto="false"
       :enable-cross-parents="true"
       label-name="meta.title"
+      :show-tip="false"
       @static-data-change="staticDataChange"
     >
       <!-- 表格 header 按钮 -->

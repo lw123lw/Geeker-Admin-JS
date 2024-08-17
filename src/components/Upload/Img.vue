@@ -63,46 +63,16 @@ import { ElNotification, formContextKey, formItemContextKey } from "element-plus
 
 // 接受父组件参数
 const props = defineProps({
-  imageUrl: {
-    type: String,
-    default: ""
-  },
-  fileList: {
-    type: Array,
-    default: () => []
-  },
-  drag: {
-    type: Boolean,
-    default: true
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  limit: {
-    type: Number,
-    default: 5
-  },
-  fileSize: {
-    type: Number,
-    default: 5
-  },
-  fileType: {
-    type: Array,
-    default: () => ["image/jpeg", "image/png", "image/gif"]
-  },
-  height: {
-    type: String,
-    default: "150px"
-  },
-  width: {
-    type: String,
-    default: "150px"
-  },
-  borderRadius: {
-    type: String,
-    default: "8px"
-  }
+  imageUrl: { type: String, default: "" },
+  fileList: { type: Array, default: () => [] },
+  drag: { type: Boolean, default: true },
+  disabled: { type: Boolean, default: false },
+  limit: { type: Number, default: 5 },
+  fileSize: { type: Number, default: 5 },
+  fileType: { type: Array, default: () => ["image/jpeg", "image/png", "image/gif"] },
+  height: { type: String, default: "150px" },
+  width: { type: String, default: "150px" },
+  borderRadius: { type: String, default: "8px" }
 });
 
 // 生成组件唯一id

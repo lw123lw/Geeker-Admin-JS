@@ -56,42 +56,15 @@ import { uploadImg } from "@/api/modules/upload";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
 
 const props = defineProps({
-  fileList: {
-    type: Array,
-    default: () => []
-  },
-  drag: {
-    type: Boolean,
-    default: true
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  limit: {
-    type: Number,
-    default: 5
-  },
-  fileSize: {
-    type: Number,
-    default: 5
-  },
-  fileType: {
-    type: Array,
-    default: () => ["image/jpeg", "image/png", "image/gif"]
-  },
-  height: {
-    type: String,
-    default: "150px"
-  },
-  width: {
-    type: String,
-    default: "150px"
-  },
-  borderRadius: {
-    type: String,
-    default: "8px"
-  }
+  fileList: { type: Array, default: () => [] },
+  drag: { type: Boolean, default: true },
+  disabled: { type: Boolean, default: false },
+  limit: { type: Number, default: 5 },
+  fileSize: { type: Number, default: 5 },
+  fileType: { type: Array, default: () => ["image/jpeg", "image/png", "image/gif"] },
+  height: { type: String, default: "150px" },
+  width: { type: String, default: "150px" },
+  borderRadius: { type: String, default: "8px" }
 });
 
 // 获取 el-form 组件上下文

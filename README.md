@@ -44,9 +44,16 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 - 图谱右键功能菜单，可自定义实现所需功能，默认展示详情、编辑、删除按钮
 - 图谱的搜索引用 ProTable 的搜索框实现，可模糊搜索，若查到多条结果则依次定位到节点并自动选中展示
 - 图谱自动调整位置，支持导出为png图片，可全屏展示
+- 图谱默认允许鼠标悬浮节点后高亮显示所直接关联的节点，其他节点变暗
 - ProTable 图谱功能展示
 
 ![video](https://gitee.com/haimashale/geeker-admin-js/raw/master/md-resources/protable-graph.gif)
+
+### 环境配置 ⚙️
+
+- `Node` ：18.12.0
+- `pnpm` ：9.7.0
+- `npm` ：10.8.2
 
 ### 安装使用步骤 📔
 

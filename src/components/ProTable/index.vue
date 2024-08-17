@@ -63,9 +63,7 @@
               <slot v-else :name="item.type" v-bind="scope" />
             </template>
             <!-- radio -->
-            <el-radio v-if="item.type === 'radio'" v-model="radio" :label="scope.row[rowKey]">
-              <i></i>
-            </el-radio>
+            <el-radio v-if="item.type === 'radio'" v-model="radio" :label="scope.row[rowKey]"><i></i></el-radio>
             <!-- sort -->
             <el-tag v-if="item.type === 'sort'" class="move">
               <el-icon>
@@ -102,6 +100,7 @@
       :children-name="childrenName"
       :label-name="labelName"
       :label-key="labelKey"
+      :show-tip="showTip"
       :enable-cross-parents="enableCrossParents"
       @action="action"
     >
@@ -161,6 +160,7 @@ const props = defineProps({
   labelKey: { type: String, default: () => "id" },
   labelName: { type: String, default: () => "name" },
   childrenName: { type: String, default: () => "children" },
+  showTip: { type: Boolean, default: () => true },
   enableCrossParents: { type: Boolean, default: () => false }
 });
 
@@ -243,21 +243,25 @@ const flatColumns = computed(() => flatColumnsFunc(tableColumns));
 
 // 定义 enumMap 存储 enum 值（避免异步请求无法格式化单元格内容 || 无法填充搜索下拉选择）
 const enumMap = ref(new Map());
-const setEnumMap = async ({ prop, enum: enumValue }) => {
-  if (!enumValue) return;
+const setEnumMap = async ({ prop, enumFunc }) => {
+  if (!enumFunc) return;
 
   // 如果当前 enumMap 存在相同的值 return
-  if (enumMap.value.has(prop) && (typeof enumValue === "function" || enumMap.value.get(prop) === enumValue)) return;
+  if (enumMap.value.has(prop) && (typeof enumFunc === "function" || enumMap.value.get(prop) === enumFunc)) return;
 
   // 当前 enum 为静态数据，则直接存储到 enumMap
-  if (typeof enumValue !== "function") return enumMap.value.set(prop, unref(enumValue));
+  if (typeof enumFunc !== "function") return enumMap.value.set(prop, unref(enumFunc));
 
   // 为了防止接口执行慢，而存储慢，导致重复请求，所以预先存储为[]，接口返回后再二次存储
   enumMap.value.set(prop, []);
 
   // 当前 enum 为后台数据需要请求数据，则调用该请求接口，并存储到 enumMap
-  const { data } = await enumValue();
-  enumMap.value.set(prop, data);
+  enumFunc().then(res => {
+    if (prop === "gender") {
+      console.log({ res });
+    }
+    enumMap.value.set(prop, res.data);
+  });
 };
 
 // 注入 enumMap
@@ -275,6 +279,8 @@ const flatColumnsFunc = (columns, flatArr = []) => {
     col.isFilterEnum = col.isFilterEnum ?? true;
 
     // 设置 enumMap
+    console.log({ col });
+    col.enumFunc = col.enum;
     await setEnumMap(col);
   });
   return flatArr.filter(item => !item._children?.length);

@@ -15,6 +15,12 @@
         :init-param="initParam"
         :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
       >
+        <template #gender="scope">
+          <span>{{ scope.row.gender === 1 ? "男" : "女" }}</span>
+        </template>
+        <template #status="scope">
+          <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">{{ scope.row.status === 0 ? "正常" : "禁用" }}</el-tag>
+        </template>
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
           <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增用户</el-button>

@@ -64,7 +64,9 @@ const props = defineProps({
   labelName: { type: String, default: "name" },
   childrenName: { type: String, default: "children" },
   showTip: { type: Boolean, default: true },
-  enableCrossParents: { type: Boolean, default: false }
+  enableCrossParents: { type: Boolean, default: false },
+  highLight: { type: Boolean, default: false },
+  graph: { type: Object, default: () => {} }
 });
 
 const emit = defineEmits(["action"]);
@@ -73,6 +75,7 @@ const page = ref();
 const relationGraph$ = ref(); // 图谱实例
 const ROOT_NAME = "表格"; // 根节点名称
 const LINE_DEFAULT_COLOR = "#b28a60";
+const opacity = 0.1;
 const options = ref(graphConfig); // 图谱配置
 const isShowNodeTips = ref(false); // 是否展示节点提示
 const isShowNodeMenuPanel = ref(false); // 是否展示节点菜单
@@ -83,6 +86,8 @@ const originalLine = ref({ from: "", to: "" }); // 被操作的原节点
 const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
 
 const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
+
+if (props.graph) Object.assign(options.value, props.graph);
 
 // 监听外部数据变化，重新渲染图谱
 watch(
@@ -159,7 +164,6 @@ const showNodeTips = ($event, nodeObject) => {
 
 const onMouseMove = $event => {
   const node = graphInstance.value.isNode($event.target);
-  console.log({ node });
   if (node) {
     showNodeTips($event, node);
     isShowNodeTips.value = true;
@@ -173,7 +177,6 @@ const onMouseMove = $event => {
 
 const showNodeRelationShip = nodeObject => {
   const clickedNodeChildrenLines = graphInstance.value.getLinks();
-  const clickedNodeChildrenNodes = graphInstance.value.getNodes();
 
   clickedNodeChildrenLines.forEach(link => {
     link.relations.forEach(line => {
@@ -183,7 +186,6 @@ const showNodeRelationShip = nodeObject => {
       line.lineWidth = line.data.originLineWidth;
     });
   });
-  clickedNodeChildrenNodes.every(node => (node.opacity = 0.4));
 
   let hasRelationShipNodes = new Set();
   // 让与{nodeObject}相关的所有连线高亮
@@ -191,9 +193,6 @@ const showNodeRelationShip = nodeObject => {
     .filter(link => link.fromNode === nodeObject || link.toNode === nodeObject)
     .forEach(link => {
       link.relations.forEach(line => {
-        line.data.orignColor = line.color;
-        line.data.orignFontColor = line.fontColor || line.color;
-        line.data.orignLineWidth = 3;
         line.opacity = 1;
         line.color = LINE_DEFAULT_COLOR;
         line.fontColor = LINE_DEFAULT_COLOR;
@@ -202,20 +201,25 @@ const showNodeRelationShip = nodeObject => {
       hasRelationShipNodes.add(link.fromNode.id);
       hasRelationShipNodes.add(link.toNode.id);
     });
-  clickedNodeChildrenLines
-    .filter(link => link.fromNode !== nodeObject && link.toNode !== nodeObject)
-    .forEach(link => {
-      link.relations.forEach(line => {
-        line.opacity = 0.4;
+
+  if (props.highLight) {
+    const clickedNodeChildrenNodes = graphInstance.value.getNodes();
+    if (props.highLight) clickedNodeChildrenNodes.every(node => (node.opacity = opacity));
+    clickedNodeChildrenLines
+      .filter(link => link.fromNode !== nodeObject && link.toNode !== nodeObject)
+      .forEach(link => {
+        link.relations.forEach(line => {
+          line.opacity = opacity;
+        });
       });
+    clickedNodeChildrenNodes.forEach(node => {
+      if (hasRelationShipNodes.has(node.id)) {
+        node.opacity = 1;
+      } else {
+        node.opacity = opacity;
+      }
     });
-  clickedNodeChildrenNodes.forEach(node => {
-    if (hasRelationShipNodes.has(node.id)) {
-      node.opacity = 1;
-    } else {
-      node.opacity = 0.2;
-    }
-  });
+  }
 };
 
 // 显示 / 隐藏节点菜单

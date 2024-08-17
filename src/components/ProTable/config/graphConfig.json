@@ -12,6 +12,13 @@
   "useAnimationWhenRefresh": true,
   "hideNodeContentByZoom": false,
   "defaultLineColor": "#b28a60",
+  "defaultLineMarker": {
+    "markerWidth": "50",
+    "markerHeight": "30",
+    "refX": 6,
+    "refY": 6,
+    "data": "M2,2 L10,6 L2,10 L6,6 L2,2"
+  },
   "layouts": [
     {
       "label": "Center",
@@ -22,7 +29,7 @@
       "allowSwitchLineShape": true,
       "zoomToFitWhenRefresh": true,
       "checkedLineColor": "#ff0000",
-      "force_node_repulsion": 0.3,
+      "force_node_repulsion": 0.5,
       "force_line_elastic": 0.8
     }
   ]

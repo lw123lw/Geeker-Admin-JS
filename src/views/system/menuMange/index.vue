@@ -11,6 +11,8 @@
       :enable-cross-parents="true"
       label-name="meta.title"
       :show-tip="false"
+      :high-light="true"
+      :graph="graph"
       @static-data-change="staticDataChange"
     >
       <!-- 表格 header 按钮 -->
@@ -55,6 +57,13 @@ import { useRouter } from "vue-router";
 const proTable = ref();
 const router = useRouter();
 const menuData = ref(authMenuList.data);
+const graph = {
+  defaultNodeShape: 0, // 节点类型 0 圆形 1 矩形
+  defaultLineShape: 6, // 连线类型
+  defaultNodeWidth: 150, // 节点默认宽度
+  defaultNodeHeight: 100, // 节点默认高度
+  disableDragNode: false // 是否允许拖拽节点
+};
 
 // 表格配置项
 const columns = [

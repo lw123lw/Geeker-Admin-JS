@@ -101,6 +101,8 @@
       :label-name="labelName"
       :label-key="labelKey"
       :show-tip="showTip"
+      :high-light="highLight"
+      :graph="graph"
       :enable-cross-parents="enableCrossParents"
       @action="action"
     >
@@ -162,7 +164,9 @@ const props = defineProps({
   childrenName: { type: String, default: () => "children" }, // 子节点字段名
   search: { type: Boolean, default: () => true }, // 是否显示搜索模块
   showTip: { type: Boolean, default: () => true }, // 是否显示tip
-  enableCrossParents: { type: Boolean, default: () => false }
+  enableCrossParents: { type: Boolean, default: () => false }, // 是否允许跨级拖拽
+  highLight: { type: Boolean, default: () => false },
+  graph: { type: Object, default: () => {} }
 });
 
 // table 实例

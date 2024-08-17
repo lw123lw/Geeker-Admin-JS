@@ -63,6 +63,7 @@ const graph = {
   defaultNodeWidth: 150, // 节点默认宽度
   defaultNodeHeight: 100, // 节点默认高度
   disableDragNode: false // 是否允许拖拽节点
+  // defaultLineColor: "red" // 自定义连线颜色
 };
 
 // 表格配置项

@@ -56,7 +56,7 @@ Geeker-Admin 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后台�
 # Gitee
 git clone https://gitee.com/haimashale/geeker-admin-js.git
 或者
-git clone https://github.com/lw123lw/Geeker-Admin-JS
+git clone https://github.com/lw123lw/Geeker-Admin-JS.git
 ```
 
 - **Install：**

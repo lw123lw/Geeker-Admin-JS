@@ -20,7 +20,7 @@
     </el-form-item>
   </el-form>
   <div class="login-btn">
-    <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置 </el-button>
+    <el-button :icon="CircleClose" round size="large" @click="resetForm(loginFormRef)"> 重置</el-button>
     <el-button :icon="UserFilled" round size="large" type="primary" :loading="loading" @click="login(loginFormRef)">
       登录
     </el-button>
@@ -39,6 +39,7 @@ import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import md5 from "md5";
+import { getTimeState } from "@/utils/index.js";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -79,18 +80,11 @@ const login = formEl => {
       setTimeout(() => {
         router.push(HOME_URL);
       }, 1000);
-      // ElNotification({
-      //   title: getTimeState(),
-      //   message: "欢迎登录 Geeker-Admin",
-      //   type: "success",
-      //   duration: 3000
-      // });
       ElNotification({
-        title: "React 付费版本 🔥🔥🔥",
-        dangerouslyUseHTMLString: true,
-        message: "预览地址：<a href='https://pro.spicyboy.cn'>https://pro.spicyboy.cn</a>",
+        title: getTimeState(),
+        message: "欢迎登录 Geeker-Admin",
         type: "success",
-        duration: 8000
+        duration: 3000
       });
     } finally {
       loading.value = false;

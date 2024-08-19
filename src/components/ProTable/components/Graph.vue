@@ -227,6 +227,7 @@ const showNodeMenus = (nodeObject, $event) => {
   isShowNodeTips.value = false;
   currentNode.value = nodeObject;
   showNodeRelationShip(nodeObject);
+  graphInstance.value.setCheckedNode(nodeObject.id);
   options.value.checkedNodeId = nodeObject.id;
   // -3的目的是为了在鼠标右键节点的时候，显示菜单的同时，鼠标指针还能在菜单上，防止tip还能显示
   nodeMenuPanelPosition.value.x = $event.clientX - 3;

@@ -18,6 +18,7 @@
         :init-param="initParam"
         :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
         :enable-cross-parents="true"
+        :high-light="true"
         @action="openDrawer"
         @delete-action="deleteAccount"
         label-name="username"
@@ -63,6 +64,7 @@ const initParam = reactive({ departmentId: "" });
 // 获取 treeFilter 数据
 // 当 proTable 的 requestAuto 属性为 false，不会自动请求表格数据，等待 treeFilter 数据回来之后，更改 initParam.departmentId 的值，才会触发请求 proTable 数据
 const treeFilterData = ref([]);
+
 const getTreeFilter = async () => {
   // debugger;
   const { data } = await getUserDepartment();
@@ -156,21 +158,21 @@ const openDrawer = (title, row) => {
 onMounted(async () => {
   await getTreeFilter();
 
-  const msg = [
-    "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
-    "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
-    "该页面可切换为图谱展示，详情可查看代码。"
-  ];
+  // const msg = [
+  //   "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
+  //   "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
+  //   "该页面可切换为图谱展示，详情可查看代码。"
+  // ];
 
-  msg.map(item => {
-    setTimeout(() => {
-      ElNotification({
-        title: "提示",
-        message: item,
-        type: "info",
-        duration: 10000
-      });
-    }, 100);
-  });
+  // msg.map(item => {
+  //   setTimeout(() => {
+  //     ElNotification({
+  //       title: "提示",
+  //       message: item,
+  //       type: "info",
+  //       duration: 10000
+  //     });
+  //   }, 100);
+  // });
 });
 </script>

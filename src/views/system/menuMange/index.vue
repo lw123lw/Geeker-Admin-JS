@@ -58,11 +58,11 @@ const proTable = ref();
 const router = useRouter();
 const menuData = ref(authMenuList.data);
 const graph = {
-  defaultNodeShape: 0, // 节点类型 0 圆形 1 矩形
+  // defaultNodeShape: 0, // 节点类型 0 圆形 1 矩形
   defaultLineShape: 6, // 连线类型
-  defaultNodeWidth: 150, // 节点默认宽度
-  defaultNodeHeight: 100, // 节点默认高度
-  disableDragNode: false // 是否允许拖拽节点
+  defaultNodeWidth: 120, // 节点默认宽度
+  defaultNodeHeight: 120 // 节点默认高度
+  // disableDragNode: false // 是否允许拖拽节点
   // defaultLineColor: "red" // 自定义连线颜色
 };
 

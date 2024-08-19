@@ -165,8 +165,8 @@ const props = defineProps({
   search: { type: Boolean, default: () => true }, // 是否显示搜索模块
   showTip: { type: Boolean, default: () => true }, // 是否显示tip
   enableCrossParents: { type: Boolean, default: () => false }, // 是否允许跨级拖拽
-  highLight: { type: Boolean, default: () => false },
-  graph: { type: Object, default: () => {} }
+  highLight: { type: Boolean, default: () => false }, // 是否高亮
+  graph: { type: Object, default: () => {} } // 图谱配置
 });
 
 // table 实例

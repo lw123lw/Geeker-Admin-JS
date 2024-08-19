@@ -23,14 +23,14 @@
     {
       "label": "Center",
       "layoutName": "force",
-      "maxLayoutTimes": 300,
+      "maxLayoutTimes": 250,
       "defaultNodeWidth": 300,
       "defaultNodeHeight": 300,
       "allowSwitchLineShape": true,
       "zoomToFitWhenRefresh": true,
       "checkedLineColor": "#ff0000",
-      "force_node_repulsion": 0.5,
-      "force_line_elastic": 0.8
+      "force_node_repulsion": 0.6,
+      "force_line_elastic": 0.4
     }
   ]
 }

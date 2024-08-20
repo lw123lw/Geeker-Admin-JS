@@ -8,16 +8,17 @@
       :columns="columns"
       :data="menuData"
       :request-auto="false"
-      :enable-cross-parents="true"
+      :enable-cross-parents="false"
       label-name="meta.title"
-      :show-tip="false"
-      :high-light="true"
+      :show-tip="showTip"
+      :high-light="highLight"
       :graph="graph"
       @static-data-change="staticDataChange"
     >
       <!-- 表格 header 按钮 -->
       <template #tableHeader>
         <el-button type="primary" :icon="CirclePlus">新增菜单 </el-button>
+        提示开关：<el-switch v-model="showTip" /> 高亮开关：<el-switch v-model="highLight" />
       </template>
       <!-- 菜单图标 -->
       <template #icon="scope">
@@ -65,6 +66,8 @@ const graph = {
   // disableDragNode: false // 是否允许拖拽节点
   // defaultLineColor: "red" // 自定义连线颜色
 };
+const showTip = ref(false);
+const highLight = ref(true);
 
 // 表格配置项
 const columns = [
@@ -77,7 +80,6 @@ const columns = [
 ];
 
 const staticDataChange = data => {
-  console.log(data);
   menuData.value = data;
 };
 </script>

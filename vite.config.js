@@ -61,7 +61,7 @@ export default defineConfig(({ mode }) => {
       // 		drop_debugger: true
       // 	}
       // },
-      sourcemap: false,
+      sourcemap: process.mode === "development",
       // 禁用 gzip 压缩大小报告，可略微减少打包时间
       reportCompressedSize: false,
       // 规定触发警告的 chunk 大小

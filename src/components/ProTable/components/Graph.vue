@@ -87,14 +87,9 @@ const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
 
 const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
 
-if (props.graph) Object.assign(options.value, props.graph);
-
-// 监听外部数据变化，重新渲染图谱
-watch(
-  () => props.treeData,
-  () => renderGraph(),
-  { deep: true }
-);
+const { layouts, ...withoutLayouts } = props?.graph;
+if (props.graph) Object.assign(options.value, withoutLayouts);
+if (layouts?.length > 0) Object.assign(options.value.layouts[0], layouts[0]);
 
 // 根据节点数量计算定位时间
 const time = computed(() => {
@@ -142,6 +137,13 @@ const processGraphData = data => {
   });
 };
 
+// 监听外部数据变化，重新渲染图谱
+watch(
+  () => props.treeData,
+  () => renderGraph(),
+  { deep: true }
+);
+
 // 渲染图谱
 const renderGraph = () => {
   jsonData.value.nodes = [];
@@ -166,9 +168,7 @@ const onMouseMove = $event => {
   const node = graphInstance.value.isNode($event.target);
   if (node) {
     showNodeTips($event, node);
-    isShowNodeTips.value = true;
     showNodeRelationShip(node);
-    return;
   } else {
     onCanvasClick();
   }
@@ -268,9 +268,7 @@ const onCanvasClick = () => {
 const replyLine = () => graphInstance.value.addLines([originalLine.value]);
 
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
-  const fromNode = rgActionParams.fromNode;
-  const toNode = rgActionParams.toNode;
-
+  const { fromNode, toNode } = rgActionParams;
   if (!props.enableCrossParents) {
     if (fromNode.text !== originalLine.value.from) {
       setEventReturnValue(true);
@@ -302,64 +300,6 @@ defineExpose({
 ::v-deep(.graph-box-main) {
   .rel-map {
     background-color: var(--el-bg-color);
-  }
-}
-.graph {
-  width: 100%;
-  height: 100%;
-  &-box {
-    width: 100%;
-    height: 100%;
-    border: var(--el-border-color) solid 1px;
-  }
-  .rc-menu {
-    position: absolute;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    background-color: #ffffff;
-    border: #eeeeee solid 1px;
-    border-radius: 10px;
-    box-shadow: 0 0 8px #cccccc;
-    .node-menu-item {
-      padding: 0 10px;
-      font-size: 14px;
-      line-height: 30px;
-      color: #444444;
-      cursor: pointer;
-      border-top: #efefef solid 1px;
-    }
-    .node-menu-item:hover {
-      background-color: rgb(66 187 66 / 20%);
-    }
-  }
-}
-.line-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 23px;
-  font-weight: bold;
-  line-height: 24px;
-}
-.c-tips {
-  position: absolute;
-  z-index: 999;
-  width: auto;
-  padding: 10px;
-  color: #ffffff;
-  background-color: #444444;
-  border: #eeeeee solid 1px;
-  border-radius: 10px;
-  box-shadow: 0 0 8px #cccccc;
-  & > div {
-    padding-left: 10px;
-    font-size: 12px;
-    line-height: 25px;
   }
 }
 </style>

@@ -262,9 +262,6 @@ const setEnumMap = async ({ prop, enumFunc }) => {
 
   // 当前 enum 为后台数据需要请求数据，则调用该请求接口，并存储到 enumMap
   enumFunc().then(res => {
-    if (prop === "gender") {
-      console.log({ res });
-    }
     enumMap.value.set(prop, res.data);
   });
 };
@@ -284,7 +281,6 @@ const flatColumnsFunc = (columns, flatArr = []) => {
     col.isFilterEnum = col.isFilterEnum ?? true;
 
     // 设置 enumMap
-    console.log({ col });
     col.enumFunc = col.enum;
     await setEnumMap(col);
   });

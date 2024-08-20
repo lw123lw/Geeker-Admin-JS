@@ -8,7 +8,7 @@
       :columns="columns"
       :data="menuData"
       :request-auto="false"
-      :enable-cross-parents="false"
+      :enable-cross-parents="true"
       label-name="meta.title"
       :show-tip="showTip"
       :high-light="highLight"
@@ -18,7 +18,8 @@
       <!-- 表格 header 按钮 -->
       <template #tableHeader>
         <el-button type="primary" :icon="CirclePlus">新增菜单 </el-button>
-        提示开关：<el-switch v-model="showTip" /> 高亮开关：<el-switch v-model="highLight" />
+        <el-switch v-model="showTip" active-text="显示提示" inactive-text="隐藏提示" inline-prompt />
+        <el-switch v-model="highLight" active-text="显示高亮" inactive-text="隐藏高亮" inline-prompt />
       </template>
       <!-- 菜单图标 -->
       <template #icon="scope">
@@ -62,15 +63,9 @@ const graph = {
   // defaultNodeShape: 0, // 节点类型 0 圆形 1 矩形
   defaultLineShape: 6, // 连线类型
   defaultNodeWidth: 120, // 节点默认宽度
-  defaultNodeHeight: 120, // 节点默认高度
+  defaultNodeHeight: 120 // 节点默认高度
   // disableDragNode: false // 是否允许拖拽节点
   // defaultLineColor: "red" // 自定义连线颜色
-  layouts: [
-    {
-      force_node_repulsion: 0.8, // 取值范围 0 - 3
-      force_line_elastic: 0.6 // 取值范围 0 - 3
-    }
-  ]
 };
 const showTip = ref(false);
 const highLight = ref(true);
@@ -86,6 +81,7 @@ const columns = [
 ];
 
 const staticDataChange = data => {
+  console.log(data);
   menuData.value = data;
 };
 </script>

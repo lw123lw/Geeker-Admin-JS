@@ -168,7 +168,9 @@ const onMouseMove = $event => {
   const node = graphInstance.value.isNode($event.target);
   if (node) {
     showNodeTips($event, node);
+    isShowNodeTips.value = true;
     showNodeRelationShip(node);
+    return;
   } else {
     onCanvasClick();
   }
@@ -300,6 +302,64 @@ defineExpose({
 ::v-deep(.graph-box-main) {
   .rel-map {
     background-color: var(--el-bg-color);
+  }
+}
+.graph {
+  width: 100%;
+  height: 100%;
+  &-box {
+    width: 100%;
+    height: 100%;
+    border: var(--el-border-color) solid 1px;
+  }
+  .rc-menu {
+    position: absolute;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #ffffff;
+    border: #eeeeee solid 1px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px #cccccc;
+    .node-menu-item {
+      padding: 0 10px;
+      font-size: 14px;
+      line-height: 30px;
+      color: #444444;
+      cursor: pointer;
+      border-top: #efefef solid 1px;
+    }
+    .node-menu-item:hover {
+      background-color: rgb(66 187 66 / 20%);
+    }
+  }
+}
+.line-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 23px;
+  font-weight: bold;
+  line-height: 24px;
+}
+.c-tips {
+  position: absolute;
+  z-index: 999;
+  width: auto;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #444444;
+  border: #eeeeee solid 1px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px #cccccc;
+  & > div {
+    padding-left: 10px;
+    font-size: 12px;
+    line-height: 25px;
   }
 }
 </style>

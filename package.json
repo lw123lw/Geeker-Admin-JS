@@ -1,22 +1,22 @@
 {
-  "name": "geeker-admin",
+  "name": "geeker-admin-js",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "geeker-admin open source management system",
+  "description": "geeker-admin-js open source management system",
   "author": {
-    "name": "Geeker",
-    "email": "848130454@qq.com",
-    "url": "https://github.com/HalseySpicy"
+    "name": "Wallace",
+    "email": "196623465@qq.com",
+    "url": "https://github.com/lw123lw"
   },
   "license": "MIT",
-  "homepage": "https://github.com/HalseySpicy/Geeker-Admin",
+  "homepage": "https://github.com/lw123lw/Geeker-Admin-JS",
   "repository": {
     "type": "git",
-    "url": "git@github.com:HalseySpicy/Geeker-Admin.git"
+    "url": "git@github.com:lw123lw/Geeker-Admin-JS.git"
   },
   "bugs": {
-    "url": "https://github.com/HalseySpicy/Geeker-Admin/issues"
+    "url": "https://github.com/lw123lw/Geeker-Admin-JS/issues"
   },
   "scripts": {
     "dev": "vite",

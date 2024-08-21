@@ -8,7 +8,7 @@
       :columns="columns"
       :data="menuData"
       :request-auto="false"
-      :enable-cross-parents="true"
+      :enable-cross-parents="false"
       label-name="meta.title"
       :show-tip="showTip"
       :high-light="highLight"

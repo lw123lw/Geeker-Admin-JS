@@ -384,7 +384,9 @@ const action = (actionStr, data) => {
 // 表格/图谱切换
 const switchGraphStatus = async () => {
   isShowGraph.value = !isShowGraph.value;
-  if (isShowGraph.value) return;
+  if (isShowGraph.value) {
+    return;
+  }
   const nodes = relationGraph.value.jsonData.nodes;
   const lines = relationGraph.value.jsonData.lines;
 

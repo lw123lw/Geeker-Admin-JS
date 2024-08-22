@@ -168,14 +168,14 @@
   z-index: 999;
   width: auto;
   padding: 10px;
-  color: #ffffff;
-  background-color: #444444;
+  color: var(--el-menu-text-color);
+  background-color: var(--el-bg-color-page);
   border: #eeeeee solid 1px;
   border-radius: 10px;
   box-shadow: 0 0 8px #cccccc;
   & > div {
     padding-left: 10px;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 25px;
   }
 }

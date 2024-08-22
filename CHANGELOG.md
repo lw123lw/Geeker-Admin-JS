@@ -12,3 +12,7 @@
 ### Fix Bug
 
 - 🧩 修复图谱点击A节点后再右键B节点，图谱不会聚焦B节点的bug([a0dbd70](https://gitee.com/haimashale/geeker-admin-js/tree/a0dbd70f52800c6a7bd55e055d573af195a1b814/))
+
+### Refactor Code
+
+- ♻️ 分离图谱函数为hooks([749bd58](https://gitee.com/haimashale/geeker-admin-js/commit/749bd58a7ed4bb2435f9c35a797461e78e2caa44))

@@ -58,6 +58,7 @@ import RelationGraph, { RGEditingConnectController, RGEditingLineController } fr
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import graphConfig from "../config/graphConfig.json";
+import { useGraph } from "../../../hooks/useGraph";
 
 const props = defineProps({
   treeData: { type: Array, default: () => [] },
@@ -74,9 +75,6 @@ const emit = defineEmits(["action"]);
 
 const page = ref();
 const relationGraph$ = ref(); // 图谱实例
-const ROOT_NAME = "表格"; // 根节点名称
-const LINE_DEFAULT_COLOR = "#b28a60"; // 默认连线颜色
-const opacity = 0.2;
 const options = ref(graphConfig); // 图谱配置
 const isShowNodeTips = ref(false); // 是否展示节点提示
 const isShowNodeMenuPanel = ref(false); // 是否展示节点菜单
@@ -86,54 +84,22 @@ const currentNode = ref({}); // 当前选择的节点
 const originalLine = ref({ from: "", to: "" }); // 被操作的原节点
 const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
 const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
+const nodeHighLight = ref(props.highLight); // 是否高亮节点
 
 // 图谱配置与 option 合并
 const { layouts, ...withoutLayouts } = props?.graph;
 if (props.graph) Object.assign(options.value, withoutLayouts);
 if (layouts?.length > 0) Object.assign(options.value.layouts[0], layouts[0]);
 
-// 获取完数据直接渲染会出现大部分节点超出边界，引入计算节点数量，延迟渲染
-const time = computed(() => {
-  return Math.ceil(jsonData.value?.lines?.length / 20) * 1000;
-});
+watch(
+  () => props.highLight,
+  val => {
+    nodeHighLight.value = val;
+  }
+);
 
-const resetPosition = () => {
-  graphInstance.value.setJsonData(jsonData.value);
-  setTimeout(async () => {
-    graphInstance.value.setZoom(100);
-    await graphInstance.value.moveToCenter();
-    await graphInstance.value.zoomToFit();
-  }, time.value);
-};
-
-// 设置跟节点
-const setRootNode = data => {
-  jsonData.value.nodes.push({ id: ROOT_NAME, text: ROOT_NAME });
-  data?.map(item => {
-    jsonData.value.lines.push({ from: ROOT_NAME, to: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item) });
-  });
-};
-
-// 处理图谱数据
-const processGraphData = data => {
-  data?.map(item => {
-    // 节点数据
-    jsonData.value.nodes.push({
-      id: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item),
-      text: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item),
-      data: item
-    });
-    if (item?.[props.childrenName] && item?.[props.childrenName].length > 0) {
-      item?.[props.childrenName].map(child => {
-        jsonData.value.lines.push({
-          from: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item),
-          to: props.labelName.split(".").reduce((acc, part) => acc && acc[part], child)
-        });
-      });
-      processGraphData(item?.[props.childrenName]);
-    }
-  });
-};
+const { ROOT_NAME, resetPosition, setRootNode, showNodeRelationShip, processGraphData, onCanvasClick, replyLine, focusOnNode } =
+  useGraph(props.treeData, jsonData, graphInstance, props.labelName, props.childrenName, nodeHighLight, originalLine);
 
 // 监听外部数据变化，重新渲染图谱
 watch(
@@ -173,47 +139,6 @@ const onMouseMove = $event => {
   isShowNodeTips.value = false;
 };
 
-// 与 { nodeObject } 直接相关连的 *节点* 和 *连线* 高亮
-const showNodeRelationShip = nodeObject => {
-  const clickedNodeChildrenLines = graphInstance.value.getLinks();
-  clickedNodeChildrenLines.forEach(link => {
-    link.relations.forEach(line => {
-      line.opacity = 1;
-      line.color = LINE_DEFAULT_COLOR;
-      line.fontColor = LINE_DEFAULT_COLOR;
-      line.lineWidth = line.data.originLineWidth;
-    });
-  });
-  let hasRelationShipNodes = new Set();
-  clickedNodeChildrenLines
-    .filter(link => link.fromNode === nodeObject || link.toNode === nodeObject)
-    .forEach(link => {
-      link.relations.forEach(line => {
-        line.opacity = 1;
-        line.color = LINE_DEFAULT_COLOR;
-        line.fontColor = LINE_DEFAULT_COLOR;
-        line.lineWidth = 3;
-      });
-      hasRelationShipNodes.add(link.fromNode.id);
-      hasRelationShipNodes.add(link.toNode.id);
-    });
-  if (props.highLight) {
-    const clickedNodeChildrenNodes = graphInstance.value.getNodes();
-    if (props.highLight) clickedNodeChildrenNodes.every(node => (node.opacity = opacity));
-    clickedNodeChildrenLines
-      .filter(link => link.fromNode !== nodeObject && link.toNode !== nodeObject)
-      .forEach(link => {
-        link.relations.forEach(line => {
-          line.opacity = opacity;
-        });
-      });
-    clickedNodeChildrenNodes.forEach(node => {
-      if (hasRelationShipNodes.has(node.id)) node.opacity = 1;
-      else node.opacity = opacity;
-    });
-  }
-};
-
 // 显示 / 隐藏节点菜单
 const showNodeMenus = (nodeObject, $event) => {
   isShowNodeTips.value = false;
@@ -244,23 +169,6 @@ const onLineClick = (lineObject, linkObject) => {
   originalLine.value = { from: lineObject.from, to: lineObject.to };
   graphInstance.value.setEditingLine(lineObject, linkObject);
 };
-
-const onCanvasClick = () => {
-  graphInstance.value.getLinks().forEach(link => {
-    link.relations.forEach(line => {
-      line.opacity = 1;
-      line.color = LINE_DEFAULT_COLOR;
-      line.fontColor = LINE_DEFAULT_COLOR;
-      line.lineWidth = line.data.originLineWidth;
-    });
-  });
-  graphInstance.value.getNodes().forEach(node => (node.opacity = 1));
-};
-
-// 恢复线条
-const replyLine = () => graphInstance.value.addLines([originalLine.value]);
-
-const focusOnNode = node => graphInstance.value.focusNodeById(node);
 
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   const { fromNode, toNode } = rgActionParams;

@@ -1,6 +1,6 @@
 import { computed } from "vue";
 
-export const useGraph = (treeData, jsonData, graphInstance, labelName, childrenName, highLight, originalLine) => {
+export const useGraph = (jsonData, graphInstance, labelName, childrenName, highLight, originalLine) => {
   const ROOT_NAME = "表格"; // 根节点名称
   const LINE_DEFAULT_COLOR = "#b28a60"; // 默认连线颜色
   const opacity = 0.2;
@@ -20,9 +20,9 @@ export const useGraph = (treeData, jsonData, graphInstance, labelName, childrenN
   };
 
   // 设置跟节点
-  const setRootNode = () => {
+  const setRootNode = data => {
     jsonData.value.nodes.push({ id: ROOT_NAME, text: ROOT_NAME });
-    treeData?.map(item => {
+    data?.map(item => {
       jsonData.value.lines.push({
         from: ROOT_NAME,
         to: labelName.split(".").reduce((acc, part) => acc && acc[part], item)
@@ -72,8 +72,8 @@ export const useGraph = (treeData, jsonData, graphInstance, labelName, childrenN
   };
 
   // 处理图谱数据
-  const processGraphData = treeData => {
-    treeData?.map(item => {
+  const processGraphData = data => {
+    data?.map(item => {
       // 节点数据
       jsonData.value.nodes.push({
         id: labelName.split(".").reduce((acc, part) => acc && acc[part], item),

@@ -99,25 +99,25 @@ watch(
 );
 
 const { ROOT_NAME, resetPosition, setRootNode, showNodeRelationShip, processGraphData, onCanvasClick, replyLine, focusOnNode } =
-  useGraph(props.treeData, jsonData, graphInstance, props.labelName, props.childrenName, nodeHighLight, originalLine);
+  useGraph(jsonData, graphInstance, props.labelName, props.childrenName, nodeHighLight, originalLine);
 
 // 监听外部数据变化，重新渲染图谱
 watch(
   () => props.treeData,
-  () => renderGraph(),
+  val => renderGraph(val),
   { deep: true }
 );
 
 // 渲染图谱
-const renderGraph = () => {
+const renderGraph = val => {
   jsonData.value.nodes = [];
   jsonData.value.lines = [];
-  setRootNode(props?.treeData);
-  processGraphData(props?.treeData);
+  setRootNode(val);
+  processGraphData(val);
   resetPosition();
 };
 
-onMounted(() => renderGraph());
+onMounted(() => renderGraph(props.treeData));
 
 const showNodeTips = ($event, nodeObject) => {
   const _base_position = graphInstance.value.options.fullscreen ? { x: 0, y: 0 } : graphInstance.value.getBoundingClientRect();

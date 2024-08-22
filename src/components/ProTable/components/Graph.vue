@@ -25,6 +25,7 @@
             v-if="isShowNodeTips && currentNode?.text !== ROOT_NAME && showTip"
             :style="{ left: nodeTipsPosition.x + 'px', top: nodeTipsPosition.y + 'px' }"
           >
+            <!-- 默认 tip, slot -->
             <slot name="tip" :node-object="currentNode?.data">
               <div>节点名称: {{ currentNode?.text }}</div>
             </slot>
@@ -53,7 +54,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
-import RelationGraph, { RGEditingConnectController, RGEditingLineController, RGMiniView } from "relation-graph-vue3";
+import RelationGraph, { RGEditingConnectController, RGEditingLineController } from "relation-graph-vue3";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import graphConfig from "../config/graphConfig.json";
@@ -74,8 +75,8 @@ const emit = defineEmits(["action"]);
 const page = ref();
 const relationGraph$ = ref(); // 图谱实例
 const ROOT_NAME = "表格"; // 根节点名称
-const LINE_DEFAULT_COLOR = "#b28a60";
-const opacity = 0.1;
+const LINE_DEFAULT_COLOR = "#b28a60"; // 默认连线颜色
+const opacity = 0.2;
 const options = ref(graphConfig); // 图谱配置
 const isShowNodeTips = ref(false); // 是否展示节点提示
 const isShowNodeMenuPanel = ref(false); // 是否展示节点菜单
@@ -84,14 +85,14 @@ const nodeMenuPanelPosition = ref({ x: 0, y: 0 }); // 节点菜单定位
 const currentNode = ref({}); // 当前选择的节点
 const originalLine = ref({ from: "", to: "" }); // 被操作的原节点
 const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
-
 const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
 
+// 图谱配置与 option 合并
 const { layouts, ...withoutLayouts } = props?.graph;
 if (props.graph) Object.assign(options.value, withoutLayouts);
 if (layouts?.length > 0) Object.assign(options.value.layouts[0], layouts[0]);
 
-// 根据节点数量计算定位时间
+// 获取完数据直接渲染会出现大部分节点超出边界，引入计算节点数量，延迟渲染
 const time = computed(() => {
   return Math.ceil(jsonData.value?.lines?.length / 20) * 1000;
 });
@@ -109,10 +110,7 @@ const resetPosition = () => {
 const setRootNode = data => {
   jsonData.value.nodes.push({ id: ROOT_NAME, text: ROOT_NAME });
   data?.map(item => {
-    jsonData.value.lines.push({
-      from: ROOT_NAME,
-      to: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item)
-    });
+    jsonData.value.lines.push({ from: ROOT_NAME, to: props.labelName.split(".").reduce((acc, part) => acc && acc[part], item) });
   });
 };
 
@@ -153,9 +151,7 @@ const renderGraph = () => {
   resetPosition();
 };
 
-onMounted(async () => {
-  await renderGraph();
-});
+onMounted(() => renderGraph());
 
 const showNodeTips = ($event, nodeObject) => {
   const _base_position = graphInstance.value.options.fullscreen ? { x: 0, y: 0 } : graphInstance.value.getBoundingClientRect();
@@ -177,9 +173,9 @@ const onMouseMove = $event => {
   isShowNodeTips.value = false;
 };
 
+// 与 { nodeObject } 直接相关连的 *节点* 和 *连线* 高亮
 const showNodeRelationShip = nodeObject => {
   const clickedNodeChildrenLines = graphInstance.value.getLinks();
-
   clickedNodeChildrenLines.forEach(link => {
     link.relations.forEach(line => {
       line.opacity = 1;
@@ -188,9 +184,7 @@ const showNodeRelationShip = nodeObject => {
       line.lineWidth = line.data.originLineWidth;
     });
   });
-
   let hasRelationShipNodes = new Set();
-  // 让与{nodeObject}相关的所有连线高亮
   clickedNodeChildrenLines
     .filter(link => link.fromNode === nodeObject || link.toNode === nodeObject)
     .forEach(link => {
@@ -203,7 +197,6 @@ const showNodeRelationShip = nodeObject => {
       hasRelationShipNodes.add(link.fromNode.id);
       hasRelationShipNodes.add(link.toNode.id);
     });
-
   if (props.highLight) {
     const clickedNodeChildrenNodes = graphInstance.value.getNodes();
     if (props.highLight) clickedNodeChildrenNodes.every(node => (node.opacity = opacity));
@@ -215,11 +208,8 @@ const showNodeRelationShip = nodeObject => {
         });
       });
     clickedNodeChildrenNodes.forEach(node => {
-      if (hasRelationShipNodes.has(node.id)) {
-        node.opacity = 1;
-      } else {
-        node.opacity = opacity;
-      }
+      if (hasRelationShipNodes.has(node.id)) node.opacity = 1;
+      else node.opacity = opacity;
     });
   }
 };
@@ -248,6 +238,7 @@ const onNodeClick = nodeObject => {
   currentNode.value = nodeObject;
   showNodeRelationShip(nodeObject);
 };
+
 /* 连线点击事件 */
 const onLineClick = (lineObject, linkObject) => {
   originalLine.value = { from: lineObject.from, to: lineObject.to };
@@ -269,6 +260,8 @@ const onCanvasClick = () => {
 // 恢复线条
 const replyLine = () => graphInstance.value.addLines([originalLine.value]);
 
+const focusOnNode = node => graphInstance.value.focusNodeById(node);
+
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   const { fromNode, toNode } = rgActionParams;
   if (!props.enableCrossParents) {
@@ -278,7 +271,6 @@ const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
       return ElNotification({ title: "警告", message: "禁止跨父节点连线", type: "warning" });
     }
   }
-
   jsonData.value.lines.map((item, index) => {
     if (item?.to === fromNode?.text) {
       delete jsonData.value.lines[index];
@@ -290,8 +282,6 @@ const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   });
 };
 
-const focusOnNode = node => graphInstance.value.focusNodeById(node);
-
 defineExpose({
   jsonData: jsonData.value,
   focusOnNode
@@ -302,64 +292,6 @@ defineExpose({
 ::v-deep(.graph-box-main) {
   .rel-map {
     background-color: var(--el-bg-color);
-  }
-}
-.graph {
-  width: 100%;
-  height: 100%;
-  &-box {
-    width: 100%;
-    height: 100%;
-    border: var(--el-border-color) solid 1px;
-  }
-  .rc-menu {
-    position: absolute;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    background-color: #ffffff;
-    border: #eeeeee solid 1px;
-    border-radius: 10px;
-    box-shadow: 0 0 8px #cccccc;
-    .node-menu-item {
-      padding: 0 10px;
-      font-size: 14px;
-      line-height: 30px;
-      color: #444444;
-      cursor: pointer;
-      border-top: #efefef solid 1px;
-    }
-    .node-menu-item:hover {
-      background-color: rgb(66 187 66 / 20%);
-    }
-  }
-}
-.line-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 23px;
-  font-weight: bold;
-  line-height: 24px;
-}
-.c-tips {
-  position: absolute;
-  z-index: 999;
-  width: auto;
-  padding: 10px;
-  color: #ffffff;
-  background-color: #444444;
-  border: #eeeeee solid 1px;
-  border-radius: 10px;
-  box-shadow: 0 0 8px #cccccc;
-  & > div {
-    padding-left: 10px;
-    font-size: 12px;
-    line-height: 25px;
   }
 }
 </style>

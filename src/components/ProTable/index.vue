@@ -350,9 +350,7 @@ const _search = async () => {
   }, 2000);
 };
 
-onUnmounted(() => {
-  clearInterval(showNodeLoopTimer.value);
-});
+onUnmounted(() => clearInterval(showNodeLoopTimer.value));
 
 const _reset = () => {
   reset();
@@ -375,26 +373,20 @@ const dragSort = () => {
 };
 
 const action = (actionStr, data) => {
-  if (actionStr === "删除") {
-    return emit("deleteAction", data);
-  }
+  if (actionStr === "删除") return emit("deleteAction", data);
   emit("action", actionStr, data);
 };
 
 // 表格/图谱切换
 const switchGraphStatus = async () => {
   isShowGraph.value = !isShowGraph.value;
-  if (isShowGraph.value) {
-    return;
-  }
+  if (isShowGraph.value) return;
   const nodes = relationGraph.value.jsonData.nodes;
   const lines = relationGraph.value.jsonData.lines;
-
   // 删除表格中仅作为展示的节点
   nodes.map((item, index) => {
     if (item.text === "表格") delete nodes[index];
   });
-
   // 创建树结构
   let treeStructure = [];
   // 构建树结构
@@ -417,7 +409,6 @@ const switchGraphStatus = async () => {
     const rootNodes = rootNames.filter(name => !childNames.has(name));
     treeStructure = rootNodes.map(rootName => map.get(rootName));
   };
-
   // 将数据嵌入树状结构的函数
   const embedDataIntoTree = async (treeArray, nodes) => {
     treeArray.forEach(tree => {
@@ -434,7 +425,6 @@ const switchGraphStatus = async () => {
   };
   await buildTree();
   treeStructure = JSON.parse(JSON.stringify(treeStructure, null, 2))[0].children;
-
   await embedDataIntoTree(treeStructure, nodes);
   tableData.value = treeStructure;
   // 兼容静态数据(非promise获取)的数据更新
@@ -452,7 +442,6 @@ defineExpose({
   isSelected,
   selectedList,
   selectedListIds,
-
   // 下面为 function
   getTableList,
   search,

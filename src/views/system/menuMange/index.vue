@@ -63,9 +63,15 @@ const graph = {
   // defaultNodeShape: 0, // 节点类型 0 圆形 1 矩形
   defaultLineShape: 6, // 连线类型
   defaultNodeWidth: 120, // 节点默认宽度
-  defaultNodeHeight: 120 // 节点默认高度
+  defaultNodeHeight: 120, // 节点默认高度
   // disableDragNode: false // 是否允许拖拽节点
   // defaultLineColor: "red" // 自定义连线颜色
+  layouts: [
+    {
+      force_node_repulsion: 0.6, // 取值范围 0 - 3
+      force_line_elastic: 0.4 // 取值范围 0 - 3
+    }
+  ]
 };
 const showTip = ref(false);
 const highLight = ref(true);

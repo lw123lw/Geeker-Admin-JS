@@ -8,7 +8,7 @@
       :columns="columns"
       :data="menuData"
       :request-auto="false"
-      :enable-cross-parents="false"
+      :enable-cross-parents="enableCrossParents"
       label-name="meta.title"
       :show-tip="showTip"
       :high-light="highLight"
@@ -20,6 +20,7 @@
         <el-button type="primary" :icon="CirclePlus">新增菜单 </el-button>
         <el-switch v-model="showTip" active-text="显示提示" inactive-text="隐藏提示" inline-prompt />
         <el-switch v-model="highLight" active-text="显示高亮" inactive-text="隐藏高亮" inline-prompt />
+        <el-switch v-model="enableCrossParents" active-text="允许跨层级" inactive-text="禁止跨层级" inline-prompt />
       </template>
       <!-- 菜单图标 -->
       <template #icon="scope">
@@ -75,6 +76,7 @@ const graph = {
 };
 const showTip = ref(false);
 const highLight = ref(true);
+const enableCrossParents = ref(false);
 
 // 表格配置项
 const columns = [

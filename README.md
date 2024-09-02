@@ -114,6 +114,11 @@ pnpm commit
 
 ### 项目截图 📷
 
+
+- 表格图谱：
+  ![table_graph_dark](./public/readme/graph2.png)
+  ![table_graph_light](./public/readme/graph.png)
+
 - 登录页：
 
 ![login_light](https://i.imgtg.com/2023/04/13/8tknp.png)
@@ -131,10 +136,6 @@ pnpm commit
 ![table_light](https://i.imgtg.com/2023/04/13/8tfMx.png)
 
 ![table_dark](https://i.imgtg.com/2023/04/13/8tv8F.png)
-
-- 表格图谱：
-  ![table_graph_dark](./public/readme/graph2.png)
-  ![table_graph_light](./public/readme/graph.png)
 
 - 数据可视化
 

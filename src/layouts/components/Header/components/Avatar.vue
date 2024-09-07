@@ -32,6 +32,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
 import InfoDialog from "./InfoDialog.vue";
 import PasswordDialog from "./PasswordDialog.vue";
+import { Edit, SwitchButton, User } from "@element-plus/icons-vue";
 
 const router = useRouter();
 const userStore = useUserStore();

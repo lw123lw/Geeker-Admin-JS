@@ -25,7 +25,7 @@
         </slot>
       </div>
       <template #file="{ file }">
-        <img :src="file.url" class="upload-image" />
+        <img :src="file?.url" class="upload-image" alt="" />
         <div class="upload-handle" @click.stop>
           <div class="handle-icon" @click="handlePictureCardPreview(file)">
             <el-icon>
@@ -51,7 +51,7 @@
 
 <script setup name="UploadImgs">
 import { ref, computed, inject, watch } from "vue";
-import { Plus } from "@element-plus/icons-vue";
+import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { uploadImg } from "@/api/modules/upload";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
 

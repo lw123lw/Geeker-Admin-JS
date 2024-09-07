@@ -57,8 +57,8 @@ importers:
         specifier: ^6.12.1
         version: 6.13.0
       relation-graph-vue3:
-        specifier: ^2.2.3
-        version: 2.2.3
+        specifier: ^2.2.4
+        version: 2.2.4
       screenfull:
         specifier: ^6.0.2
         version: 6.0.2
@@ -4222,8 +4222,8 @@ packages:
     resolution: {integrity: sha512-G08Dxvm4iDN3MLM0EsP62EDV9IuhXPR6blNz6Utcp7zyV3tr4HVNINt6MpaRWbxoOHT3Q7YN2P+jaHX8vUbgog==}
     engines: {node: '>= 0.10'}
 
-  relation-graph-vue3@2.2.3:
-    resolution: {integrity: sha512-a/NFfFkZf3eQcsQ71X3vM7wQ68JIE2rdyHTD/mhhM6i/oQz7nA+nPvhOqPZZpEtukxtsfNWrPQOEeP+Y1dw8TQ==}
+  relation-graph-vue3@2.2.4:
+    resolution: {integrity: sha512-+wuiNaipz1W5D09tzFhkCqG5phq59sTfQqu4eb+nM7n3m4aL6cgUEHEbuW8W/FRsjQjEiyIVCloJFxuJfKLFLw==}
 
   remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
@@ -9790,7 +9790,7 @@ snapshots:
 
   relateurl@0.2.7: {}
 
-  relation-graph-vue3@2.2.3:
+  relation-graph-vue3@2.2.4:
     dependencies:
       html2canvas: 1.4.1
       screenfull: 5.2.0

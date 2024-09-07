@@ -42,7 +42,7 @@
 <script setup name="ImportExcel">
 import { ref } from "vue";
 import { useDownload } from "@/hooks/useDownload";
-import { Download } from "@element-plus/icons-vue";
+import { Download, UploadFilled } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 
 // 是否覆盖数据
@@ -58,25 +58,34 @@ const parameter = ref({
   fileType: ["application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
 });
 
-// 接收父组件参数
+/**
+ * 接收父组件参数
+ * @param params
+ */
 const acceptParams = params => {
   parameter.value = { ...parameter.value, ...params };
   dialogVisible.value = true;
 };
 
-// Excel 导入模板下载
+/**
+ * Excel 导入模板下载
+ */
 const downloadTemp = () => {
-  if (!parameter.value.tempApi) return;
+  if (!parameter.value?.tempApi) return;
   useDownload(parameter.value.tempApi, `${parameter.value.title}模板`);
 };
 
-// 文件上传
+/**
+ * 文件上传
+ * @param param
+ * @returns {Promise<void>}
+ */
 const uploadExcel = async param => {
   let excelFormData = new FormData();
   excelFormData.append("file", param.file);
   excelFormData.append("isCover", isCover.value);
-  await parameter.value.importApi(excelFormData);
-  parameter.value.getTableList && parameter.value.getTableList();
+  await parameter.value?.importApi(excelFormData);
+  parameter.value?.getTableList && parameter.value.getTableList();
   dialogVisible.value = false;
 };
 
@@ -85,7 +94,7 @@ const uploadExcel = async param => {
  * @param file 上传的文件
  * */
 const beforeExcelUpload = file => {
-  const isExcel = parameter.value.fileType.includes(file.type);
+  const isExcel = parameter.value.fileType?.includes(file.type);
   const fileSize = file.size / 1024 / 1024 < parameter.value.fileSize;
   if (!isExcel)
     ElNotification({
@@ -104,7 +113,9 @@ const beforeExcelUpload = file => {
   return isExcel && fileSize;
 };
 
-// 文件数超出提示
+/**
+ *  文件数超出提示
+ */
 const handleExceed = () => {
   ElNotification({
     title: "温馨提示",
@@ -113,7 +124,9 @@ const handleExceed = () => {
   });
 };
 
-// 上传错误提示
+/**
+ *  上传错误提示
+ */
 const excelUploadError = () => {
   ElNotification({
     title: "温馨提示",
@@ -122,7 +135,9 @@ const excelUploadError = () => {
   });
 };
 
-// 上传成功提示
+/**
+ *  上传成功提示
+ */
 const excelUploadSuccess = () => {
   ElNotification({
     title: "温馨提示",
@@ -136,5 +151,5 @@ defineExpose({
 });
 </script>
 <style lang="scss" scoped>
-@import "./index.scss";
+@import "./index";
 </style>

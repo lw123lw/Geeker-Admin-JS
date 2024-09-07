@@ -37,7 +37,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { useTabsStore } from "@/stores/modules/tabs";
 import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
-import { CircleClose, UserFilled } from "@element-plus/icons-vue";
+import { CircleClose, Lock, User, UserFilled } from "@element-plus/icons-vue";
 import md5 from "md5";
 import { getTimeState } from "@/utils/index.js";
 

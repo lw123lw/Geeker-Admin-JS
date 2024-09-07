@@ -38,6 +38,7 @@ import { useTabsStore } from "@/stores/modules/tabs";
 import { useGlobalStore } from "@/stores/modules/global";
 import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { useRoute, useRouter } from "vue-router";
+import { CircleClose, DArrowLeft, DArrowRight, FolderDelete, FullScreen, Remove } from "@element-plus/icons-vue";
 
 const route = useRoute();
 const router = useRouter();

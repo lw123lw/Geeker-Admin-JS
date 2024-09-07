@@ -135,7 +135,7 @@ import { ref, watch, provide, onMounted, unref, computed, reactive, onUnmounted 
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
-import { Refresh, Operation, Search, Share } from "@element-plus/icons-vue";
+import { Refresh, Operation, Search, Share, DCaret } from "@element-plus/icons-vue";
 import { generateUUID, handleProp, hasTreeStructure } from "@/utils";
 import SearchForm from "@/components/SearchForm/index.vue";
 import Pagination from "./components/Pagination.vue";
@@ -191,7 +191,7 @@ const showNodeLoopTimer = ref(null);
 
 // 控制 ToolButton 显示
 const showToolButton = key => {
-  return Array.isArray(props.toolButton) ? props.toolButton.includes(key) : props.toolButton;
+  return Array.isArray(props.toolButton) ? props.toolButton?.includes(key) : props.toolButton;
 };
 
 // 单选值

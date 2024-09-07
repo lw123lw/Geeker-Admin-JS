@@ -50,6 +50,7 @@
 <script setup name="TreeFilter">
 import { ref, watch, nextTick, onMounted } from "vue";
 import { ElTree } from "element-plus";
+import { More } from "@element-plus/icons-vue";
 
 const props = defineProps({
   id: {

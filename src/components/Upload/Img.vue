@@ -60,6 +60,7 @@ import { ref, computed, inject } from "vue";
 import { generateUUID } from "@/utils";
 import { uploadImg } from "@/api/modules/upload";
 import { ElNotification, formContextKey, formItemContextKey } from "element-plus";
+import { Delete, Edit, Plus, ZoomIn } from "@element-plus/icons-vue";
 
 // 接受父组件参数
 const props = defineProps({

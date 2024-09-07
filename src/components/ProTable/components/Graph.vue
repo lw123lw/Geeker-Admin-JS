@@ -58,7 +58,7 @@ import RelationGraph, { RGEditingConnectController, RGEditingLineController } fr
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
 import graphConfig from "../config/graphConfig.json";
-import { useGraph } from "../../../hooks/useGraph";
+import { useGraph } from "@/hooks/useGraph.js";
 
 const props = defineProps({
   treeData: { type: Array, default: () => [] },
@@ -133,9 +133,7 @@ const onMouseMove = $event => {
     isShowNodeTips.value = true;
     showNodeRelationShip(node);
     return;
-  } else {
-    onCanvasClick();
-  }
+  } else onCanvasClick();
   isShowNodeTips.value = false;
 };
 
@@ -154,7 +152,7 @@ const showNodeMenus = (nodeObject, $event) => {
 
 // 节点菜单操作
 const doAction = actionName => {
-  emit("action", actionName, currentNode.value?.data);
+  emit("action", actionName, currentNode.value.data);
   isShowNodeMenuPanel.value = false;
 };
 
@@ -172,21 +170,20 @@ const onLineClick = (lineObject, linkObject) => {
 
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   const { fromNode, toNode } = rgActionParams;
-  if (!props.enableCrossParents) {
-    if (fromNode.text !== originalLine.value.from) {
-      setEventReturnValue(true);
-      replyLine();
-      return ElNotification({ title: "警告", message: "禁止跨父节点连线", type: "warning" });
-    }
+  if (!fromNode || !toNode) return console.error("fromNode 或 toNode 不存在");
+  if (!props.enableCrossParents && fromNode.text !== originalLine.value.from) {
+    setEventReturnValue(true);
+    replyLine();
+    return ElNotification({ title: "警告", message: "禁止跨父节点连线", type: "warning" });
   }
-  jsonData.value.lines.map((item, index) => {
-    if (item?.to === fromNode?.text) {
-      delete jsonData.value.lines[index];
-      const newLine = { from: toNode.text, to: fromNode.text };
-      jsonData.value.lines.unshift(newLine);
-      return;
+  // 连线操作
+  jsonData.value.lines.forEach((item, index) => {
+    if (item?.to === fromNode.text) {
+      jsonData.value.lines.splice(index, 1);
+      jsonData.value.lines.unshift({ from: toNode.text, to: fromNode.text }); // 添加新线
+    } else if (item[props.childrenName] && item[props.childrenName].length > 0) {
+      beforeCreateLine(rgActionParams);
     }
-    if (item[props.childrenName] && item[props.childrenName].length > 0) beforeCreateLine(rgActionParams);
   });
 };
 

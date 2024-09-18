@@ -14,6 +14,7 @@
       :high-light="highLight"
       :graph="graph"
       @static-data-change="staticDataChange"
+      @cross-parents="crossParents"
     >
       <!-- 表格 header 按钮 -->
       <template #tableHeader>
@@ -52,7 +53,7 @@
 
 <script setup name="menuMange">
 import { ref } from "vue";
-import { Delete, EditPen, CirclePlus, Right } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Right } from "@element-plus/icons-vue";
 import authMenuList from "@/assets/json/authMenuList.json";
 import ProTable from "@/components/ProTable/index.vue";
 import { useRouter } from "vue-router";
@@ -91,5 +92,8 @@ const columns = [
 const staticDataChange = data => {
   console.log(data);
   menuData.value = data;
+};
+const crossParents = nodeObject => {
+  console.log({ nodeObject });
 };
 </script>

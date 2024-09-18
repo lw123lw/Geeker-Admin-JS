@@ -105,6 +105,7 @@
       :graph="graph"
       :enable-cross-parents="enableCrossParents"
       @action="action"
+      @cross-parents="crossParents"
     >
       <template #action="{ nodeObject }">
         <slot name="graphAction" :node-object="nodeObject"></slot>
@@ -131,11 +132,11 @@
 </template>
 
 <script setup name="ProTable">
-import { ref, watch, provide, onMounted, unref, computed, reactive, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, provide, reactive, ref, unref, watch } from "vue";
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
 import { useSelection } from "@/hooks/useSelection";
-import { Refresh, Operation, Search, Share, DCaret } from "@element-plus/icons-vue";
+import { DCaret, Operation, Refresh, Search, Share } from "@element-plus/icons-vue";
 import { generateUUID, handleProp, hasTreeStructure } from "@/utils";
 import SearchForm from "@/components/SearchForm/index.vue";
 import Pagination from "./components/Pagination.vue";
@@ -322,7 +323,8 @@ const emit = defineEmits([
   "action",
   "deleteAction",
   "staticDataChange",
-  "rowClick"
+  "rowClick",
+  "crossParents"
 ]);
 
 const _search = async () => {
@@ -429,6 +431,10 @@ const switchGraphStatus = async () => {
   tableData.value = treeStructure;
   // 兼容静态数据(非promise获取)的数据更新
   emit("staticDataChange", tableData.value);
+};
+
+const crossParents = nodeObject => {
+  emit("crossParents", nodeObject);
 };
 
 // 暴露给父组件的参数和方法 (外部需要什么，都可以从这里暴露出去)

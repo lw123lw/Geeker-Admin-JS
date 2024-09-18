@@ -38,7 +38,7 @@
     <div
       v-show="isShowNodeMenuPanel"
       class="rc-menu"
-      :style="{ left: nodeMenuPanelPosition.x + 'px', top: nodeMenuPanelPosition.y + 'px' }"
+      :style="{ left: nodeMenuPosition.x + 'px', top: nodeMenuPosition.y + 'px' }"
     >
       <el-space :direction="'vertical'" v-if="currentNode">
         <slot name="preAction" :node-object="currentNode?.data"></slot>
@@ -57,21 +57,24 @@ import { computed, onMounted, ref, watch } from "vue";
 import RelationGraph, { RGEditingConnectController, RGEditingLineController } from "relation-graph-vue3";
 import { Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ElNotification } from "element-plus";
-import graphConfig from "../config/graphConfig.json";
 import { useGraph } from "@/hooks/useGraph.js";
+import graphConfig from "@/components/ProTable/config/graphConfig.json";
 
 const props = defineProps({
-  treeData: { type: Array, default: () => [] },
-  labelKey: { type: String, default: "id" },
-  labelName: { type: String, default: "name" },
-  childrenName: { type: String, default: "children" },
-  showTip: { type: Boolean, default: true },
-  enableCrossParents: { type: Boolean, default: false },
-  highLight: { type: Boolean, default: false },
-  graph: { type: Object, default: () => {} }
+  treeData: { type: Array, default: () => [] }, // 树形数据
+  labelKey: { type: String, default: "id" }, // 节点key
+  labelName: { type: String, default: "name" }, // 节点名称
+  childrenName: { type: String, default: "children" }, // 子节点名称
+  showTip: { type: Boolean, default: true }, // 是否显示节点提示
+  enableCrossParents: { type: Boolean, default: false }, // 是否允许跨父节点连线
+  highLight: { type: Boolean, default: false }, // 是否高亮节点
+  graph: {
+    type: Object,
+    default: () => {}
+  } // 图谱配置
 });
 
-const emit = defineEmits(["action"]);
+const emit = defineEmits(["action", "crossParents"]);
 
 const page = ref();
 const relationGraph$ = ref(); // 图谱实例
@@ -79,7 +82,7 @@ const options = ref(graphConfig); // 图谱配置
 const isShowNodeTips = ref(false); // 是否展示节点提示
 const isShowNodeMenuPanel = ref(false); // 是否展示节点菜单
 const nodeTipsPosition = ref({ x: 0, y: 0 });
-const nodeMenuPanelPosition = ref({ x: 0, y: 0 }); // 节点菜单定位
+const nodeMenuPosition = ref({ x: 0, y: 0 }); // 节点菜单定位
 const currentNode = ref({}); // 当前选择的节点
 const originalLine = ref({ from: "", to: "" }); // 被操作的原节点
 const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
@@ -101,7 +104,6 @@ watch(
 const { ROOT_NAME, resetPosition, setRootNode, showNodeRelationShip, processGraphData, onCanvasClick, replyLine, focusOnNode } =
   useGraph(jsonData, graphInstance, props.labelName, props.childrenName, nodeHighLight, originalLine);
 
-// 监听外部数据变化，重新渲染图谱
 watch(
   () => props.treeData,
   val => renderGraph(val),
@@ -145,8 +147,8 @@ const showNodeMenus = (nodeObject, $event) => {
   graphInstance.value.setCheckedNode(nodeObject.id);
   options.value.checkedNodeId = nodeObject.id;
   // -3的目的是为了在鼠标右键节点的时候，显示菜单的同时，鼠标指针还能在菜单上，防止tip还能显示
-  nodeMenuPanelPosition.value.x = $event.clientX - 3;
-  nodeMenuPanelPosition.value.y = $event.clientY - 3;
+  nodeMenuPosition.value.x = $event.clientX - 3;
+  nodeMenuPosition.value.y = $event.clientY - 3;
   isShowNodeMenuPanel.value = true;
 };
 
@@ -171,10 +173,20 @@ const onLineClick = (lineObject, linkObject) => {
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   const { fromNode, toNode } = rgActionParams;
   if (!fromNode || !toNode) return console.error("fromNode 或 toNode 不存在");
+  // 禁止跨父节点连线
   if (!props.enableCrossParents && fromNode.text !== originalLine.value.from) {
     setEventReturnValue(true);
     replyLine();
     return ElNotification({ title: "警告", message: "禁止跨父节点连线", type: "warning" });
+  }
+  /**
+   *  触发跨层级连线事件，传递跨层级的两个节点数据，由外部处理。
+   *  注意：crossParents 事件仅在 enableCrossParents 为 true 时触发，且触发时，会自动删除原线，并添加新线。
+   *  使用 ProTable 组件调用该事件可用来保存改变的数据，方便数据提交。
+   */
+  if (props.enableCrossParents && fromNode.text !== originalLine.value.from) {
+    const relationNodes = { from: toNode.data, to: fromNode.data };
+    emit("crossParents", relationNodes);
   }
   // 连线操作
   jsonData.value.lines.forEach((item, index) => {

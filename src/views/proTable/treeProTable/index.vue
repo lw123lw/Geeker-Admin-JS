@@ -19,10 +19,10 @@
         :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
         :enable-cross-parents="true"
         :high-light="true"
+        :graph="graph"
+        label-name="username"
         @action="openDrawer"
         @delete-action="deleteAccount"
-        label-name="username"
-        :graph="graph"
       >
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
@@ -45,38 +45,33 @@
 import { onMounted, reactive, ref } from "vue";
 import { genderType } from "@/utils/dict";
 import { useHandleData } from "@/hooks/useHandleData";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
-import { getUserTreeList, deleteUser, editUser, addUser, getUserStatus, getUserDepartment } from "@/api/modules/user";
+import { addUser, deleteUser, editUser, getUserDepartment, getUserStatus, getUserTreeList } from "@/api/modules/user";
 
 // ProTable 实例
 const proTable = ref();
-
 // 图谱中被选择的节点
 const graphSelectedNode = ref(null);
-
 // 如果表格需要初始化请求参数，直接定义传给 ProTable(之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ departmentId: "" });
-
-// 获取 treeFilter 数据
 // 当 proTable 的 requestAuto 属性为 false，不会自动请求表格数据，等待 treeFilter 数据回来之后，更改 initParam.departmentId 的值，才会触发请求 proTable 数据
 const treeFilterData = ref([]);
 
 const graph = {
   layouts: [
     {
-      force_node_repulsion: 0.3, // 取值范围 0 - 3
-      force_line_elastic: 0.8 // 取值范围 0 - 3
+      force_node_repulsion: 0.1, // 取值范围 0 - 3
+      force_line_elastic: 0.1 // 取值范围 0 - 3
     }
   ]
 };
 
 const getTreeFilter = async () => {
-  // debugger;
   const { data } = await getUserDepartment();
   treeFilterData.value = data || [];
   initParam.departmentId = data[0]?.id || "";
@@ -106,15 +101,7 @@ const remoteMethod = query => {
 // 表格配置项
 const columns = reactive([
   { type: "index", label: "#", width: 80 },
-  {
-    prop: "username",
-    label: "用户姓名",
-    search: {
-      el: "input",
-      props: { placeholder: "请输入用户姓名查询" },
-      key: "username"
-    }
-  },
+  { prop: "username", label: "用户姓名", search: { el: "input", props: { placeholder: "请输入用户姓名查询" }, key: "username" } },
   {
     prop: "gender",
     label: "性别",
@@ -159,30 +146,24 @@ const openDrawer = (title, row) => {
     row: { ...row },
     isView: title === "查看",
     api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
-    getTableList: proTable.value?.getTableList
+    getTableList: proTable.value.getTableList
   };
-  drawerRef.value?.acceptParams(params);
+  drawerRef.value.acceptParams(params);
   graphSelectedNode.value = row;
 };
 
 onMounted(async () => {
   await getTreeFilter();
 
-  const msg = [
-    "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
-    "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
-    "该页面可切换为图谱展示，详情可查看代码。"
-  ];
-
-  msg.map(item => {
-    setTimeout(() => {
-      ElNotification({
-        title: "提示",
-        message: item,
-        type: "info",
-        duration: 10000
-      });
-    }, 100);
-  });
+  // const msg = [
+  //   "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
+  //   "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
+  //   "该页面可切换为图谱展示，详情可查看代码。"
+  // ];
+  // msg.map(item => {
+  //   setTimeout(() => {
+  //     ElNotification({ title: "提示", message: item, type: "info", duration: 10000 });
+  //   }, 100);
+  // });
 });
 </script>

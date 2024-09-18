@@ -45,7 +45,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { genderType } from "@/utils/dict";
 import { useHandleData } from "@/hooks/useHandleData";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
@@ -155,15 +155,15 @@ const openDrawer = (title, row) => {
 onMounted(async () => {
   await getTreeFilter();
 
-  // const msg = [
-  //   "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
-  //   "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
-  //   "该页面可切换为图谱展示，详情可查看代码。"
-  // ];
-  // msg.map(item => {
-  //   setTimeout(() => {
-  //     ElNotification({ title: "提示", message: item, type: "info", duration: 10000 });
-  //   }, 100);
-  // });
+  const msg = [
+    "该页面 ProTable 数据不会自动请求，需等待 treeFilter 数据请求完成之后，才会触发表格请求。",
+    "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
+    "该页面可切换为图谱展示，详情可查看代码。"
+  ];
+  msg.map(item => {
+    setTimeout(() => {
+      ElNotification({ title: "提示", message: item, type: "info", duration: 10000 });
+    }, 100);
+  });
 });
 </script>

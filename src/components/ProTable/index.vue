@@ -29,7 +29,7 @@
               <el-button :icon="Search" circle @click="isShowSearch = !isShowSearch" />
             </el-tooltip>
             <el-tooltip v-if="isTreeData" content="开/关图谱" placement="top">
-              <el-button :icon="Share" circle @click="switchGraphStatus" />
+              <el-button id="graphSwitch" :icon="Share" circle @click="switchGraphStatus" />
             </el-tooltip>
           </el-space>
         </slot>
@@ -188,7 +188,7 @@ const isShowGraph = ref(false);
 
 const defaultAppendValue = ref("");
 
-const showNodeLoopTimer = ref(null);
+const showNodeLoopTimer = ref(0);
 
 // 控制 ToolButton 显示
 const showToolButton = key => {

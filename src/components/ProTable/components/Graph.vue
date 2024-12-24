@@ -8,8 +8,8 @@
         :on-node-click="onNodeClick"
         :on-line-click="onLineClick"
         :on-canvas-click="onCanvasClick"
-        @before-create-line="beforeCreateLine"
         @mousemove="onMouseMove"
+        @before-create-line="beforeCreateLine"
       >
         <template #node="{ node }">
           <div class="line-text" @click="showNodeMenus(node, $event)" @contextmenu.prevent.stop="showNodeMenus(node, $event)">
@@ -86,7 +86,6 @@ const nodeMenuPosition = ref({ x: 0, y: 0 }); // 节点菜单定位
 const currentNode = ref({}); // 当前选择的节点
 const originalLine = ref({ from: "", to: "" }); // 被操作的原节点
 const jsonData = ref({ rootId: "graph", nodes: [], lines: [] }); // 图谱数据
-const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
 const nodeHighLight = ref(props.highLight); // 是否高亮节点
 
 // 图谱配置与 option 合并
@@ -101,6 +100,8 @@ watch(
   }
 );
 
+const graphInstance = computed(() => relationGraph$.value?.getInstance()); // 图谱实例
+
 const { ROOT_NAME, resetPosition, setRootNode, showNodeRelationShip, processGraphData, onCanvasClick, replyLine, focusOnNode } =
   useGraph(jsonData, graphInstance, props.labelName, props.childrenName, nodeHighLight, originalLine);
 
@@ -110,6 +111,8 @@ watch(
   { deep: true }
 );
 
+onMounted(() => renderGraph(props.treeData));
+
 // 渲染图谱
 const renderGraph = val => {
   jsonData.value.nodes = [];
@@ -118,8 +121,6 @@ const renderGraph = val => {
   processGraphData(val);
   resetPosition();
 };
-
-onMounted(() => renderGraph(props.treeData));
 
 const showNodeTips = ($event, nodeObject) => {
   const _base_position = graphInstance.value.options.fullscreen ? { x: 0, y: 0 } : graphInstance.value.getBoundingClientRect();
@@ -172,7 +173,7 @@ const onLineClick = (lineObject, linkObject) => {
 
 const beforeCreateLine = (rgActionParams, setEventReturnValue) => {
   const { fromNode, toNode } = rgActionParams;
-  if (!fromNode || !toNode) return console.error("fromNode 或 toNode 不存在");
+  if (!fromNode || !toNode) return console.error("起始节点(fromNode) 或 结束节点(toNode) 不存在");
   // 禁止跨父节点连线
   if (!props.enableCrossParents && fromNode.text !== originalLine.value.from) {
     setEventReturnValue(true);

@@ -116,7 +116,7 @@ pnpm commit
 
 - 表格图谱：
   ![table_graph_dark](https://ooo.0x0.ooo/2024/12/26/OEh1hr.png)
-  ![table_graph_light](https://ooo.0x0.ooo/2024/12/26/OEh1hr.png)
+  ![table_graph_light](https://ooo.0x0.ooo/2024/12/26/OEh7tM.png)
 
 - 登录页：
 

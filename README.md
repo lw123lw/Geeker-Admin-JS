@@ -115,8 +115,8 @@ pnpm commit
 ### 项目截图 📷
 
 - 表格图谱：
-  ![table_graph_dark](./public/readme/graph2.png)
-  ![table_graph_light](./public/readme/graph.png)
+  ![table_graph_dark](https://ooo.0x0.ooo/2024/12/26/OEh1hr.png)
+  ![table_graph_light](https://ooo.0x0.ooo/2024/12/26/OEh1hr.png)
 
 - 登录页：
 

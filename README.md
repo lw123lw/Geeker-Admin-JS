@@ -18,6 +18,9 @@ Geeker-Admin-JS 一款基于 Vue3.4、Vite5、Pinia、Element-Plus 开源的后�
 - Gitee：https://gitee.com/HalseySpicy/Geeker-Admin
 - GitHub：https://github.com/HalseySpicy/Geeker-Admin
 
+### 配套后端
+- python版本：https://gitee.com/ge-yaliang/geeker-admin-js-fastapi
+
 ### 项目文档 📚
 
 - 项目更新日志：[CHANGELOG.md](./CHANGELOG.md)
